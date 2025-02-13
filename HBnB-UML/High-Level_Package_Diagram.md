@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
 class PresentationLayer {
     <<Interface>>
@@ -16,3 +17,4 @@ class PersistenceLayer {
 }
 PresentationLayer --> BusinessLogicLayer : Facade Pattern
 BusinessLogicLayer --> PersistenceLayer : Database Operations
+```
