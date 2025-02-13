@@ -11,30 +11,37 @@ sequenceDiagram
     User->>Browser: Fill registration form
     Browser->>API: Send registration details
     API->>API: Validate and create user account
-    API->>BusinessLogic: Validate user data
+    API->>BusinessLogic: Validate and process request
     BusinessLogic->>Database: Check if user exists
     Database-->>BusinessLogic: User not found
     BusinessLogic->>Database: Store new user
     Database-->>BusinessLogic: Success
-    BusinessLogic->>API: Return success response
+    BusinessLogic-->>API: Return response
     alt Success
-        API->>Browser: Return success message
-        Browser->>User: Display registration successful
+        API-->>Browser: Return success message
+        Browser-->>User: Display registration successful
     else Failure
-        API->>Browser: Return error message
-        Browser->>User: Display registration error
+        API-->>Browser: Return error message
+        Browser-->>User: Display registration error
     end
 
     # Place Creation: A user creates a new place listing.
 
     User->>Browser: Fill place creation form
     Browser->>API: Send place details
-    API->>BusinessLogic: Validate place data
+    API->>BusinessLogic: Validate and process request
+    BusinessLogic->>Database: Check if place exists
+    Database-->>BusinessLogic: Place not found
     BusinessLogic->>Database: Store new place
     Database-->>BusinessLogic: Success
-    BusinessLogic->>API: Return success response
-    API->>Browser: Return place created message
-    Browser->>User: Display place created confirmation
+    BusinessLogic-->>API: Return response
+    alt Success
+        API-->>Browser: Return success message
+        Browser-->>User: Display place creation successful
+    else Failure
+        API-->>Browser: Return error message
+        Browser-->>User: Display place creation error
+    end
 
     # Review Submission: A user submits a review for a place.
 
@@ -45,9 +52,9 @@ sequenceDiagram
     Database-->>BusinessLogic: Place found
     BusinessLogic->>Database: Store new review
     Database-->>BusinessLogic: Success
-    BusinessLogic->>API: Return success response
-    API->>Browser: Return review submitted message
-    Browser->>User: Display review confirmation
+    BusinessLogic-->>API: Return success response
+    API-->>Browser: Return review submitted message
+    Browser-->>User: Display review confirmation
 
     # Fetching a List of Places: A user requests a list of places based on certain criteria.
 
@@ -56,7 +63,7 @@ sequenceDiagram
     API->>BusinessLogic: Retrieve places based on criteria
     BusinessLogic->>Database: Query places with filters
     Database-->>BusinessLogic: Return place list
-    BusinessLogic->>API: Return place list
-    API->>Browser: Return places list
-    Browser->>User: Display search results
+    BusinessLogic-->>API: Return place list
+    API-->>Browser: Return places list
+    Browser-->>User: Display search results
 ```

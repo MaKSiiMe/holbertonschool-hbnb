@@ -15,7 +15,7 @@ sequenceDiagram
     Database-->>BusinessLogic: Place found
     BusinessLogic->>Database: Store new review
     Database-->>BusinessLogic: Success
-    BusinessLogic->>API: Return success response
-    API->>Browser: Return review submitted message
-    Browser->>User: Display review confirmation
+    BusinessLogic-->>API: Return success response
+    API-->>Browser: Return review submitted message
+    Browser-->>User: Display review confirmation
 ```

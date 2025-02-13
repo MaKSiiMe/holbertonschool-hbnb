@@ -13,7 +13,7 @@ sequenceDiagram
     API->>BusinessLogic: Retrieve places based on criteria
     BusinessLogic->>Database: Query places with filters
     Database-->>BusinessLogic: Return place list
-    BusinessLogic->>API: Return place list
-    API->>Browser: Return places list
-    Browser->>User: Display search results
+    BusinessLogic-->>API: Return place list
+    API-->>Browser: Return places list
+    Browser-->>User: Display search results
 ```
