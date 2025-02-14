@@ -56,20 +56,22 @@ The application follows a **three-layer architecture**:
 
 ```mermaid
 classDiagram
-  class PresentationLayer {
-    +handleUserRequests()
-    +renderData()
-  }
-  class BusinessLogicLayer {
-    +validateData()
-    +processRequests()
-  }
-  class PersistenceLayer {
-    +storeData()
-    +fetchData()
-  }
-  PresentationLayer --> BusinessLogicLayer
-  BusinessLogicLayer --> PersistenceLayer
+class PresentationLayer {
+    <<Interface>>
+    +FrontendServices
+    +API
+}
+class BusinessLogicLayer {
+    +User
+    +Place
+    +Reviews
+    +Amenity
+}
+class PersistenceLayer {
+    +DatabaseAccess
+}
+PresentationLayer --> BusinessLogicLayer : Facade Pattern
+BusinessLogicLayer --> PersistenceLayer : Database Operations
 ```
 
 ## 5. Detailed Class Diagram for Business Logic Layer
@@ -85,48 +87,61 @@ classDiagram
 
 ```mermaid
 classDiagram
-  class User {
-    +UUID id
-    +String firstName
-    +String lastName
-    +String email
-    +String password
-    +Boolean isAdmin
-    +createUser()
-    +updateUser()
-    +deleteUser()
-  }
-  class Place {
-    +UUID id
-    +String title
-    +String description
-    +Float price
-    +Float latitude
-    +Float longitude
-    +createPlace()
-    +updatePlace()
-    +deletePlace()
-  }
-  class Review {
-    +UUID id
-    +Int rating
-    +String comment
-    +createReview()
-    +updateReview()
-    +deleteReview()
-  }
-  class Amenity {
-    +UUID id
-    +String name
-    +String description
-    +createAmenity()
-    +updateAmenity()
-    +deleteAmenity()
-  }
-  User --> Place : owns
-  User --> Review : submits
-  Place --> Review : receives
-  Place --> Amenity : has
+    class User {
+        #UUID id
+        +String firstName
+        +String lastName
+        +String email
+        -String password
+        -Boolean isAdmin
+        +Date Creation
+        +Date Updated
+        +createUser()
+        +updateUser()
+        +deleteUser()
+    }
+
+    class Place {
+        #UUID id
+        +String title
+        +String description
+        +Float price
+        +Float latitude
+        +Float longitude
+        +Date Creation
+        +Date Updated
+        +createPlace()
+        +updatePlace()
+        +deletePlace()
+    }
+
+    class Review {
+        #UUID id
+        +Int rating
+        +String comment
+        +Date Creation
+        +Date Updated
+        +createReview()
+        +updateReview()
+        +deleteReview()
+    }
+
+    class Amenity {
+        #UUID id
+        +String name
+        +String description
+        +Date Creation
+        +Date Updated
+        +createAmenity()
+        +updateAmenity()
+        +deleteAmenity()
+    }
+
+    User "1" -- "0..*" Place : owns
+    User "1" -- "0..*" Review : submits
+    Place "1" -- "0..*" Review : receives
+    Place "1" -- "0..*" Amenity : has
+
 ```
 
 ## 6. Sequence Diagrams for API Calls
