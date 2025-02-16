@@ -12,11 +12,6 @@ This document provides a detailed plan for the **HBnB Evolution** application. I
 ✔️ Associate amenities   
 ✔️ Submit reviews  
 
-This documentation covers:  
-📂 **General architecture** (package diagram)  
-🛠 **Business model** (detailed class diagram)  
-🔄 **API interactions** (sequence diagrams)  
-
 ---
 
 ## General Architecture  
