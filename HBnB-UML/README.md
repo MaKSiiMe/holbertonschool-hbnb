@@ -1,6 +1,6 @@
 # 🏠 HBnB Project   
 
-## Project Objective: HBNB Evolution
+## Project Objective: HBNB Evolution - PART 1
 
 The **HBNB Evolution** project is an advanced step in the development of a **fully functional AirBnB clone**, incorporating more robust and scalable features. The goal is to transition from a simple command-line interface to a fully interactive **web application**, integrating a **storage engine, a RESTful API, and a front-end interface**.
 
