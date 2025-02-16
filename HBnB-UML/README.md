@@ -1,9 +1,18 @@
-# 🏠 HBnB Project – Documentation  
+# 🏠 HBnB Project   
 
-## 📌 Introduction  
+## Project Objective: HBNB Evolution
 
-### 🎯 Objective  
-This document provides a detailed plan for the **HBnB Evolution** application. It consolidates all diagrams and explanatory notes into a comprehensive technical reference, guiding the implementation phases and clarifying the system's architecture and design.  
+The **HBNB Evolution** project is an advanced step in the development of a **fully functional AirBnB clone**, incorporating more robust and scalable features. The goal is to transition from a simple command-line interface to a fully interactive **web application**, integrating a **storage engine, a RESTful API, and a front-end interface**.
+
+This project emphasizes **software architecture, database management, and web development**, allowing users to **create, update, delete, and manage places, users, reviews, and amenities**. It also introduces concepts of **data persistence**, improving efficiency with different storage options (file storage and database storage).
+
+### Key Objectives:
+- **Enhancing user experience** with a web-based UI.
+- **Implementing a RESTful API** to facilitate communication between the front-end and back-end.
+- **Optimizing data management** with an improved storage system.
+- **Ensuring scalability and maintainability** through modular development and best coding practices.
+
+By the end of this project, the system should be capable of handling real-world scenarios for an AirBnB-like platform, demonstrating a comprehensive understanding of full-stack development.
 
 ### 📍 Project Scope  
 **HBnB Evolution** is a simplified application inspired by Airbnb that allows users to:  
@@ -13,6 +22,30 @@ This document provides a detailed plan for the **HBnB Evolution** application. I
 ✔️ Submit reviews  
 
 ---
+## Business Rules and Requirements
+
+### User Entity
+- Each user has a **first name**, **last name**, **email**, and **password**.
+- Users can be identified as **administrators** through a boolean attribute.
+- Users should be able to **register**, **update** their profile information, and be **deleted**.
+
+### Place Entity
+- Each place has a **title**, **description**, **price**, **latitude**, and **longitude**.
+- Places are associated with the **user** who created them (owner).
+- Places can have a **list of amenities**.
+- Places can be **created**, **updated**, **deleted**, and **listed**.
+
+### Review Entity
+- Each review is associated with a **specific place** and **user**, and includes a **rating** and **comment**.
+- Reviews can be **created**, **updated**, **deleted**, and **listed by place**.
+
+### Amenity Entity
+- Each amenity has a **name** and **description**.
+- Amenities can be **created**, **updated**, **deleted**, and **listed**.
+
+### General Rules
+- Each object should be uniquely identified by an **ID**.
+- For audit reasons, the **creation** and **update datetime** should be recorded for all entities.
 
 ## General Architecture  
 
@@ -223,14 +256,3 @@ sequenceDiagram
 3️⃣ The results are returned and displayed to the user.  
 
 ---
-
-## 📌 Conclusion  
-
-This document is a **comprehensive technical guide** for **HBnB Evolution**. It provides:  
-
-📂 **An overview of the architecture** and the **facade pattern** 🏗️  
-📊 **A structured business model** with a class diagram 🔍  
-🔄 **A detailed API interaction schema** outlining the main operations  
-
-🔹 **Readability and professionalism** ensure a clear understanding for developers throughout the implementation.  
-🔹 This document will evolve to reflect project updates.  
