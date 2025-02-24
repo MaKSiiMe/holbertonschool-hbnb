@@ -1,0 +1,2 @@
+# pour ne pas tenir compte des fichiers contenu dans myenv
+myenv/
