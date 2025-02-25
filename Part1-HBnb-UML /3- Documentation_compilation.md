@@ -62,7 +62,7 @@ class PresentationLayer {
     +API
 }
 class BusinessLogicLayer {
-    +baseModel
+    +BaseModel
     +UserModel
     +PlaceModel
     +ReviewsModel
