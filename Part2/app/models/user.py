@@ -1,4 +1,13 @@
 from BaseModel import BaseModel
+import re
+
+
+def is_valid_email(email):
+    """
+    Validate the email address format using a regular expression    
+    """
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(email_regex, email) is not None
 
 class User(BaseModel):
     def __init__(self, first_name, last_name, email, is_admin=False):
