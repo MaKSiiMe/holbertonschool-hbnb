@@ -105,6 +105,7 @@ classDiagram
         }
 
     class Place {
+        + UUID4 owner_id
         + String title
         + String description
         + Float price
