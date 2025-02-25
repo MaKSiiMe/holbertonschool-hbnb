@@ -2,6 +2,13 @@ from BaseModel import BaseModel
 
 class User(BaseModel):
     def __init__(self, first_name, last_name, email, is_admin=False):
+        if not first_name:
+            raise ValueError("first_name ne doit pas être vide")
+        if not last_name:
+            raise ValueError("last_name ne doit pas être vide")
+        if not email:
+            raise ValueError("email ne doit pas être vide")
+        
         super().__init__()
         self.first_name = first_name
         self.last_name = last_name
