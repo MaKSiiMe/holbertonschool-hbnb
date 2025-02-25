@@ -12,11 +12,13 @@ def is_valid_email(email):
 class User(BaseModel):
     def __init__(self, first_name, last_name, email, is_admin=False):
         if not first_name:
-            raise ValueError("first_name must not be emplty")
+            raise ValueError("first_name must not be empty")
         if not last_name:
-            raise ValueError("last_name must not be emplty")
-        if not email:
-            raise ValueError("email must not be emplty")
+            raise ValueError("last_name must not be empty")
+        if not email or not isinstance(email, str):
+            raise ValueError("email is required and must be a string")
+        if not is_valid_email(email):
+            raise ValueError("email is not a valid email")
         
         super().__init__()
         self.first_name = first_name
@@ -24,6 +26,8 @@ class User(BaseModel):
         self.email = email
         self.is_admin = is_admin
         self.places = []
+        self.reviews = []
+        self.password = None
 
     def update_password(self, password):
         self.password = password
@@ -31,3 +35,10 @@ class User(BaseModel):
     
     def add_place(self, place):
         self.places.append(place)
+
+    def add_review(self, review):
+        self.reviews.append(review)
+    
+@property
+def full_name(self):
+    return f"{self.first_name} {self.last_name}"
