@@ -60,10 +60,11 @@ class PresentationLayer {
     +API
 }
 class BusinessLogicLayer {
-    +User
-    +Place
-    +Reviews
-    +Amenity
+    +BaseModel
+    +UserModel
+    +PlaceModel
+    +ReviewsModel
+    +AmenityModel
 
 }
 class PersistenceLayer {
