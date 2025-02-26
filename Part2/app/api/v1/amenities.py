@@ -1,37 +1,10 @@
----FILEPATH Part2/app/api/v1/amenities.py
----FIND
-```
-class Amenity:
-    """Amenity class"""
-    
-    def __init__(self, name):
-        self.name = name
+from flask_restx import Namespace, Resource
+from app.services.facade import facade
 
-    def __str__(self):
-        return self.name
+api = Namespace('amenities', description="Amenity operations")
 
-    
-def some_function_with_a_long_name_that_exceeds_the_character_limit_of_seventy_nine_characters():
-    print("This is a long line that needs to be broken down into multiple lines to comply with PEP 8 guidelines.")
-    
-```
----REPLACE
-```
-class Amenity:
-    """Amenity class"""
-
-
-    def __init__(self, name):
-        self.name = name
-
-
-    def __str__(self):
-        return self.name
-
-
-def some_function_with_a_long_name_that_exceeds_the_character_limit_of_seventy_nine_characters():
-    print("This is a long line that needs to be broken down into multiple "
-          "lines to comply with PEP 8 guidelines.")
-
-```
----COMPLETE
+@api.route('/')
+class AmenityList(Resource):
+    def get(self):
+        """Fetch all amenities"""
+        return [amenity.to_dict() for amenity in facade.amenity_repo.get_all()]

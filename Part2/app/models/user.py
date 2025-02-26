@@ -1,35 +1,35 @@
 # app/models/user.py
 
+
 import re
 from app.models.base_model import BaseModel
 
 
 class User(BaseModel):
-    """Class representing a User in the HBnB application."""
+    """Represents a User in the HBnB application."""
 
     def __init__(self, first_name, last_name, email, is_admin=False):
         """
-        Initialize a new User instance.
+        Initializes a new User instance.
 
         Args:
-            first_name (str): First name of the user (required, max 50 chars)
-            last_name (str): Last name of the user(required, max 50 chars)
-            email (str): Email address of the user
-            (required, must be valid format)
-            is_admin (bool, optional): Admin status. Defaults to False.
+            first_name (str): User's first name (max 50 chars).
+            last_name (str): User's last name (max 50 chars).
+            email (str): User's unique email.
+            is_admin (bool): Whether the user is an admin (default False).
 
         Raises:
-            ValueError: If any validation fails
+            ValueError: If input validation fails.
         """
         super().__init__()
 
-        # Validate first_name
+        # Validate first name
         if not first_name or not isinstance(first_name, str):
             raise ValueError("First name is required and must be a string")
         if len(first_name) > 50:
             raise ValueError("First name cannot exceed 50 characters")
 
-        # Validate last_name
+        # Validate last name
         if not last_name or not isinstance(last_name, str):
             raise ValueError("Last name is required and must be a string")
         if len(last_name) > 50:
@@ -38,10 +38,10 @@ class User(BaseModel):
         # Validate email
         if not email or not isinstance(email, str):
             raise ValueError("Email is required and must be a string")
-        # Simple email validation using regex
+
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_pattern, email):
-            raise ValueError("Invalid email format")
+            raise ValueError(f"Invalid email format: {email}")
 
         # Validate is_admin
         if not isinstance(is_admin, bool):
@@ -51,21 +51,23 @@ class User(BaseModel):
         self.last_name = last_name
         self.email = email
         self.is_admin = is_admin
-        self.places = []  # List to store places owned by the user
-        self.reviews = []  # List to store reviews written by the user
+        self.places = []  # Stores owned places
+        self.reviews = []  # Stores user reviews
 
     def add_place(self, place):
-        """Add a place to the user's owned places."""
-        self.places.append(place)
+        """Adds a place to the user's list of owned places."""
+        if place not in self.places:
+            self.places.append(place)
 
     def add_review(self, review):
-        """Add a review to the user's written reviews."""
-        self.reviews.append(review)
+        """Adds a review to the user's list of written reviews."""
+        if review not in self.reviews:
+            self.reviews.append(review)
 
     @property
     def full_name(self):
         """
-        Return the full name of the user.
+        Returns the full name of the user.
 
         Returns:
             str: Full name (first_name + last_name)
