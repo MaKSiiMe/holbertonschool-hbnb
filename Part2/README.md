@@ -65,6 +65,10 @@ hbnb/
   - `email` (String, unique, validated format)
   - `is_admin` (Boolean, default `False`)
 
+#### `Amenity` (Inherits `BaseModel`)
+- **Attributes**:
+  - `name` (String, max 50 chars)
+  
 #### `Place` (Inherits `BaseModel`)
 - **Attributes**:
   - `title` (String, max 100 chars)
@@ -81,10 +85,6 @@ hbnb/
   - `rating` (Integer, 1-5)
   - `place` (Relationship to `Place`)
   - `user` (Relationship to `User`)
-
-#### `Amenity` (Inherits `BaseModel`)
-- **Attributes**:
-  - `name` (String, max 50 chars)
 
 ### 👤 Contributors:  
 - [David Tolza](https://github.com/VidadTol)  
