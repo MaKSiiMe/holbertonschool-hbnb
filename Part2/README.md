@@ -1,4 +1,6 @@
-# HBnB - Web Application (Part 2)
+# 🏠 HBnB Project   
+
+## Project Objective: Web Application  - PART 2
 
 ## Description
 
