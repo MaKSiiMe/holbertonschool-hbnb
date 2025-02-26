@@ -16,35 +16,35 @@ The **HBnB** project is a full-stack web application that simulates a simplified
 
 ## Project Structure
 
+```
 hbnb/
 ├── app/
-│ ├── init.py # Initializes Flask app and dependencies
-│ ├── api/
-│ │ ├── init.py # API blueprint registration
-│ │ ├── v1/ # API version 1 endpoints
-│ │ ├── init.py
-│ │ ├── users.py # User-related routes
-│ │ ├── places.py # Place-related routes
-│ │ ├── reviews.py # Review-related routes
-│ │ ├── amenities.py # Amenity-related routes
-│ ├── models/
-│ │ ├── init.py # Model imports and relationships
-│ │ ├── user.py # User model definition
-│ │ ├── place.py # Place model definition
-│ │ ├── review.py # Review model definition
-│ │ ├── amenity.py # Amenity model definition
-│ ├── services/
-│ │ ├── init.py
-│ │ ├── facade.py # Facade pattern for service abstraction
-│ ├── persistence/
-│ ├── init.py
-│ ├── repository.py # Database interaction layer
-├── run.py # Application entry point
-├── config.py # Environment configuration
-├── requirements.txt # Project dependencies
-├── README.md # Project documentation
-
-Copy
+│   ├── __init__.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── v1/
+│   │       ├── __init__.py
+│   │       ├── users.py
+│   │       ├── places.py
+│   │       ├── reviews.py
+│   │       ├── amenities.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── place.py
+│   │   ├── review.py
+│   │   ├── amenity.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── facade.py
+│   ├── persistence/
+│       ├── __init__.py
+│       ├── repository.py
+├── run.py
+├── config.py
+├── requirements.txt
+├── README.md
+```
 
 ## Core Components
 
