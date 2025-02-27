@@ -11,10 +11,12 @@ review_model = api.model('Review', {
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
+
 def validate_rating(rating):
     """Validate that the rating is between 1 and 5."""
     if not (1 <= rating <= 5):
         raise ValueError("Rating must be between 1 and 5")
+
 
 @api.route('/')
 class ReviewList(Resource):
@@ -29,16 +31,16 @@ class ReviewList(Resource):
             # Validate the rating
             if 'rating' in review_data:
                 validate_rating(review_data['rating'])
-            
+
             new_review = facade.create_review(review_data)
             return {
                 "message": "Review successfully created",
                 "data": new_review.to_dict()
             }, 201
-        
+
         except ValueError as e:
             return {"error": str(e)}, 400
-        
+
         except Exception as e:
             return {"error": "An unexpected error occurred."}, 500
 
@@ -48,9 +50,10 @@ class ReviewList(Resource):
         try:
             reviews = facade.get_all_reviews()
             return {"data": [review.to_dict() for review in reviews]}, 200
-        
+
         except Exception as e:
             return {"error": "An unexpected error occurred."}, 500
+
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):
@@ -75,7 +78,7 @@ class ReviewResource(Resource):
             # Validate the rating
             if 'rating' in review_update:
                 validate_rating(review_update['rating'])
-            
+
             updated_review = facade.update_review(review_id, review_update)
             if not updated_review:
                 return {"error": "Review not found"}, 404
@@ -84,10 +87,10 @@ class ReviewResource(Resource):
                 "message": "Review updated successfully",
                 "data": updated_review.to_dict()
             }, 200
-        
+
         except ValueError as e:
             return {"error": str(e)}, 400
-        
+
         except Exception as e:
             return {"error": "An unexpected error occurred."}, 500
 
@@ -99,9 +102,10 @@ class ReviewResource(Resource):
             if not facade.delete_review(review_id):
                 return {"error": "Review not found"}, 404
             return {"message": "Review deleted successfully"}, 200
-        
+
         except Exception as e:
             return {"error": "An unexpected error occurred."}, 500
+
 
 @api.route('/places/<place_id>/reviews')
 class PlaceReviewList(Resource):
@@ -111,6 +115,6 @@ class PlaceReviewList(Resource):
         try:
             place_reviews = facade.get_reviews_by_place(place_id)
             return {"data": [review.to_dict() for review in place_reviews]}, 200
-        
+
         except Exception as e:
             return {"error": "An unexpected error occurred."}, 500
