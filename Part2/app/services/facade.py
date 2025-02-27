@@ -25,7 +25,9 @@ class HBnBFacade:
         return self.user_repo.find_by_email(email)
 
     def update_user(self, user_id, user_data):
-        return self.user_repo.update(user_id, user_data)
+        self.user_repo.update(user_id, user_data)
+        return self.user_repo.get(user_id)
+
 
     """
     Amenity
@@ -89,3 +91,4 @@ class HBnBFacade:
     def delete_review(self, review_id):
         # Placeholder for logic to delete a review
         pass
+    
