@@ -8,6 +8,8 @@ user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user')
+    'password': fields.String(required=True, description='Password of the user')
+    'admin': fields.Boolean(required=False, description='Admin status of the user')
 })
 
 @api.route('/')
@@ -71,19 +73,4 @@ class UserResource(Resource):
                 'first_name': updated_user.first_name,
                 'last_name': updated_user.last_name,
                 'email': updated_user.email}, 200
-    
-@api.route('/email/<email>')
-class UserByEmailResource(Resource):
-    @api.response(200, 'User details retrieved successfully')
-    @api.response(404, 'User not found')
-    def get(self, email):
-        """Get user details by email"""
-        user = facade.get_user_by_email(email)
-        if not user:
-            return {'error': 'User not found'}, 404
-        return {
-                'id': user.id, 
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email
-                }, 200
+
