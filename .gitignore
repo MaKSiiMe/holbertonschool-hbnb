@@ -1,4 +1,4 @@
 # pour ne pas tenir compte des fichiers contenu dans myenv
-myenv/
+venv/
 # pour ne pas tenir compte du fichier __pycache__
 __pycache__/
