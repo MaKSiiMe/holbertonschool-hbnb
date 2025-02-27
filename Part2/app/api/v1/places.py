@@ -67,7 +67,7 @@ class PlaceList(Resource):
             api.abort(400, str(e))
 
         return {'id': new_place.id, 'title': new_place.title,
-                'descripton': new_place.description, 'price': new_place.price,
+                'description': new_place.description, 'price': new_place.price,
                 'latitude': new_place.latitude,
                 'longitude': new_place.longitude,
                 'owner_id': new_place.owner_id}, 201
@@ -100,9 +100,8 @@ class PlaceResource(Resource):
             if amenity:
                 amenities_data.append(amenity.to_dict())
             
-
         return {'id': place.id, 'title': place.title,
-                'descripton': place.description, 'price': place.price,
+                'description': place.description, 'price': place.price,
                 'latitude': place.latitude,
                 'longitude': place.longitude, 'owner': user_data,
                 'amenities': amenities_data}, 200
