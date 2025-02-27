@@ -28,7 +28,7 @@ class ReviewList(Resource):
         review_data = api.payload
 
         try:
-            # Validate the rating
+            # Validate the rating in the review data
             if 'rating' in review_data:
                 validate_rating(review_data['rating'])
 
@@ -75,7 +75,7 @@ class ReviewResource(Resource):
         review_update = api.payload
 
         try:
-            # Validate the rating
+            # Validate the rating in the review update data
             if 'rating' in review_update:
                 validate_rating(review_update['rating'])
 
