@@ -1,22 +1,72 @@
-#!/usr/bin/python3
-"""This module for the Class Place"""
+# app/models/place.py
 
-import uuid
-from .base import BaseModel
+from app.models.BaseModel import BaseModel
+from app.models.user import User
 
 
 class Place(BaseModel):
-    """To create attibutes for the Class"""
-    def __init__(self, title, description, price, latitude, longitude, owner_id, amenities=[]):
+    """Class representing a Place in the HBnB application."""
+
+    def __init__(self, title, description, price, latitude, longitude, owner):
+        """
+        Initialize a new Place instance.
+
+        Args:
+            title (str): Title of the place (required, max 100 chars)
+            description (str, optional): Description of the place
+            price (float): Price per night (must be positive)
+            latitude (float): Latitude coordinate (-90 to 90)
+            longitude (float): Longitude coordinate (-180 to 180)
+            owner (User): User instance of the owner
+
+        Raises:
+            ValueError: If any validation fails
+        """
         super().__init__()
+
+        # Validate title
+        if not title or not isinstance(title, str):
+            raise ValueError("Title is required and must be a string")
+        if len(title) > 100:
+            raise ValueError("Title cannot exceed 100 characters")
+
+        # Validate description (optional)
+        if description is not None and not isinstance(description, str):
+            raise ValueError("Description must be a string")
+
+        # Validate price
+        if not isinstance(price, (int, float)):
+            raise ValueError("Price must be a number")
+        if price <= 0:
+            raise ValueError("Price must be a positive value")
+
+        # Validate latitude
+        if not isinstance(latitude, (int, float)):
+            raise ValueError("Latitude must be a number")
+        if latitude < -90.0 or latitude > 90.0:
+            raise ValueError("Latitude must be between -90.0 and 90.0")
+
+        # Validate longitude
+        if not isinstance(longitude, (int, float)):
+            raise ValueError("Longitude must be a number")
+        if longitude < -180.0 or longitude > 180.0:
+            raise ValueError("Longitude must be between -180.0 and 180.0")
+
+        # Validate owner
+        if not isinstance(owner, User):
+            raise ValueError("Owner must be a User instance")
+
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner_id = owner_id
-        self.amenities = amenities  # List to store related amenities
+        self.owner = owner
         self.reviews = []  # List to store related reviews
+        self.amenities = []  # List to store related amenities
+
+        # Add this place to the owner's places
+        owner.add_place(self)
 
     def add_review(self, review):
         """Add a review to the place."""
@@ -24,86 +74,23 @@ class Place(BaseModel):
 
     def add_amenity(self, amenity):
         """Add an amenity to the place."""
-        self.amenities.append(amenity)
+        if amenity not in self.amenities:
+            self.amenities.append(amenity)
 
-    def remove_review(self, review):
-        """Remove a review to the place"""
-        self.reviews.remove(review)
+    def remove_amenity(self, amenity):
+        """Remove an amenity from the place."""
+        if amenity in self.amenities:
+            self.amenities.remove(amenity)
 
-    @property
-    def title(self):
-        return self._title
+    def get_average_rating(self):
+        """
+        Calculate the average rating for this place.
 
-    @title.setter
-    def title(self, value):
-        if not value:
-            raise TypeError("Title is required")
-        if not isinstance(value, str):
-            raise TypeError("Title value is not valid")
-        if len(value) > 100:
-            raise ValueError("Title is too long")
-        self._title = value
+        Returns:
+            float: Average rating or 0 if no reviews
+        """
+        if not self.reviews:
+            return 0
 
-    @property
-    def description(self):
-        return self._description
-
-    @description.setter
-    def description(self, value):
-        if not isinstance(value, str):
-            raise TypeError("Description value is not valid")
-        self._description = value
-
-    @property
-    def price(self):
-        return self._price
-
-    @price.setter
-    def price(self, value):
-        if not value:
-            raise TypeError("Price is required")
-        if not isinstance(value, (float, int)):
-            raise TypeError("Price value is not valid")
-        if value < 0:
-            raise ValueError("Price must be a positive number")
-        self._price = value
-
-    @property
-    def latitude(self):
-        return self._latitude
-
-    @latitude.setter
-    def latitude(self, value):
-        if not value:
-            raise TypeError("Latitude is required")
-        if not isinstance(value, float):
-            raise TypeError("Latitude is not valid")
-        if value < -90 or value > 90:
-            raise ValueError("Latitude must be between -90 and 90")
-        self._latitude = value
-
-    @property
-    def longitude(self):
-        return self._longitude
-
-    @longitude.setter
-    def longitude(self, value):
-        if not value:
-            raise TypeError("Longitude is required")
-        if not isinstance(value, float):
-            raise TypeError("Longitude is not valid")
-        if value < -180 or value > 180:
-            raise ValueError("Longitude must be between -180 and 180")
-        self._longitude = value
-
-    @property
-    def owner_id(self):
-        return self._owner_id
-
-    @owner_id.setter
-    def owner_id(self, value):
-        if not value:
-            raise TypeError("Owner ID is required")
-        if not isinstance(value, str):
-            raise TypeError("Owner ID is not valid")
-        self._owner_id = value
+        total_rating = sum(review.rating for review in self.reviews)
+        return total_rating / len(self.reviews)
