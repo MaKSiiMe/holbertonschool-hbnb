@@ -8,8 +8,8 @@ user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user')
-    'password': fields.String(required=True, description='Password of the user')
-    'admin': fields.Boolean(required=False, description='Admin status of the user')
+    #'password': fields.String(required=True, description='Password of the user')
+    #'admin': fields.Boolean(required=False, description='Admin status of the user')
 })
 
 @api.route('/')
@@ -34,6 +34,15 @@ class UserList(Resource):
                 'last_name': new_user.last_name,
                 'email': new_user.email
                 }, 201
+    @api.response(200, 'User details retrieved successfully')
+    def get(self):
+        """Get all users"""
+        users = facade.get_all_users()
+        return [{'id': user.id, 
+                 'first_name': user.first_name,
+                 'last_name': user.last_name,
+                 'email': user.email
+                 } for user in users], 200
     
 @api.route('/<user_id>')
 class UserResource(Resource):
