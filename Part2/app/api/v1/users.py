@@ -15,7 +15,7 @@ user_model = api.model('User', {
 @api.route('/')
 class UserList(Resource):
     @api.expect(user_model, validate=True)
-    @api.response(201, 'User successfully created')
+    @api.response(200, 'User successfully created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
     def post(self):
@@ -32,9 +32,10 @@ class UserList(Resource):
             return {'id': new_user.id,
                 'first_name': new_user.first_name,
                 'last_name': new_user.last_name,
-                'email': new_user.email}, 201
-        except ValueError as e:
-            return {'error': str(e)}, 400
+                'email': new_user.email}, 200
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
+        
     
     """@api.response(200, 'User details retrieved successfully')
     def get(self):
