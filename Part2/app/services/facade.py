@@ -40,7 +40,13 @@ class HBnBFacade:
     def update_user(self, user_id, user_data):
         self.user_repo.update(user_id, user_data)
         return self.user_repo.get(user_id)
-
+    
+    def get_all_users(self):
+        users = [
+            {'id': 1, 'first_name': 'Jane', 'last_name': 'Doe', 'email':'jane.doe@example.com'},
+            {'id': 2, 'first_name': 'John', 'last_name': 'Smith', 'email': 'john.smith@example.com'}
+        ]
+        return users
     """
     Amenity
     """
