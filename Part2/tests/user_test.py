@@ -22,3 +22,17 @@ class TestUserEndpoints(unittest.TestCase):
             "email": "invalid-email"
         })
         self.assertEqual(response.status_code, 400)
+    
+    def test_get_users(self):
+        """Test to retrieve the list of users"""
+        response = self.client.get('/api/v1/users/')
+        self.assertEqual(response.status_code, 200)  
+        self.assertIsInstance(response.get_json(), list)  
+
+    def test_user_not_found(self):
+        """Test to access a non-existent user"""
+        response = self.client.get('/api/v1/users/999')
+        self.assertEqual(response.status_code, 404)  
+
+if __name__ == '__main__':
+    unittest.main()
