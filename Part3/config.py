@@ -1,4 +1,3 @@
-# filepath: /home/gioarias/holbertonschool-HBnB/Part2/config.py
 import os
 
 class Config:
