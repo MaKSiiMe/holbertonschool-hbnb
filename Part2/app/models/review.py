@@ -4,6 +4,7 @@ from app.models.BaseModel import BaseModel
 from app.models.place import Place
 from app.models.user import User
 
+
 class Review(BaseModel):
     """Class representing a Review in the HBnB application."""
 

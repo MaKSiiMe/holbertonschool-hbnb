@@ -37,6 +37,7 @@ place_model = api.model('Place', {
     'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
 })
 
+
 @api.route('/')
 class PlaceList(Resource):
     @api.expect(place_model)
@@ -45,11 +46,11 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
-        
+
         user = facade.get_user(place_data.get("owner_id"))
         if not user:
             api.abort(400, "Invalid user")
-        
+
         invalid_amenities = []
         for amenity_id in place_data.get("amenities"):
             amenity = facade.get_amenity(amenity_id)
@@ -58,7 +59,7 @@ class PlaceList(Resource):
         if invalid_amenities:
             api.abort(400, f"Invalid amenities: {invalid_amenities}")
 
-        try:    
+        try:
             new_place = facade.create_place(place_data)
             user.add_place(new_place.id)
             user_data = user.to_dict()
@@ -81,6 +82,7 @@ class PlaceList(Resource):
                  'latitude': place.latitude,
                  'longitude': place.longitude} for place in all_places], 200
 
+
 @api.route('/<place_id>')
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
@@ -88,7 +90,7 @@ class PlaceResource(Resource):
     def get(self, place_id):
         """Get place details by ID"""
         place = facade.get_place(place_id)
-        
+
         if not place:
             api.abort(404, "Place not found")
 
@@ -99,7 +101,7 @@ class PlaceResource(Resource):
             amenity = facade.get_amenity(amenity_id)
             if amenity:
                 amenities_data.append(amenity.to_dict())
-            
+
         return {'id': place.id, 'title': place.title,
                 'description': place.description, 'price': place.price,
                 'latitude': place.latitude,
@@ -113,7 +115,7 @@ class PlaceResource(Resource):
     def put(self, place_id):
         """Update a place's information"""
         place_data = api.payload
-        
+
         place = facade.get_place(place_id)
         if not place:
             api.abort(404, "Place not found")
@@ -129,9 +131,9 @@ class PlaceResource(Resource):
         if invalid_amenities:
             api.abort(400, f"Invalid amenities: {invalid_amenities}")
 
-        try:   
+        try:
             facade.update_place(place_id, place_data)
         except (ValueError, TypeError) as e:
             api.abort(400, str(e))
-        
+
         return {"message": "Place updated successfully"}, 200

@@ -12,6 +12,7 @@ user_model = api.model('User', {
     #'admin': fields.Boolean(required=False, description='Admin status of the user')
 })
 
+
 @api.route('/')
 class UserList(Resource):
     @api.expect(user_model, validate=True)
@@ -66,7 +67,7 @@ class UserResource(Resource):
     def put(self, user_id):
         """Update user details by ID"""
         user_data = api.payload
-        
+
         """Check if the user exists"""
         user = facade.get_user(user_id)
         if not user:
@@ -76,7 +77,7 @@ class UserResource(Resource):
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user and existing_user.id != user.id:
             return {'error': 'Email already registered by another user'}, 400
-        
+
         updated_user = facade.update_user(user_id, user_data)
         return {'id': updated_user.id,
                 'first_name': updated_user.first_name,
