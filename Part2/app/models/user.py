@@ -3,7 +3,6 @@
 import re
 from app.models.BaseModel import BaseModel
 
-
 class User(BaseModel):
     """Class representing a User in the HBnB application."""
 
@@ -13,9 +12,8 @@ class User(BaseModel):
 
         Args:
             first_name (str): First name of the user (required, max 50 chars)
-            last_name (str): Last name of the user(required, max 50 chars)
-            email (str): Email address of the user
-            (required, must be valid format)
+            last_name (str): Last name of the user (required, max 50 chars)
+            email (str): Email address of the user (required, must be valid format)
             is_admin (bool, optional): Admin status. Defaults to False.
 
         Raises:
