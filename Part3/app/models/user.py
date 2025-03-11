@@ -1,12 +1,16 @@
 # app/models/user.py
-
 import re
 from app.models.BaseModel import BaseModel
+from app.extensions import bcrypt
+from flask_sqlalchemy import SQLAlchemy
+from app.extensions import db
+
+db = SQLAlchemy()
 
 class User(BaseModel):
     """Class representing a User in the HBnB application."""
 
-    def __init__(self, first_name, last_name, email, is_admin=False):
+    def __init__(self, first_name, last_name, email, password=None, is_admin=False):
         """
         Initialize a new User instance.
 
@@ -52,6 +56,11 @@ class User(BaseModel):
         self.places = []  # List to store places owned by the user
         self.reviews = []  # List to store reviews written by the user
 
+        #initialize the password
+        self.password = None
+        if password:
+            self.hash_password(password)
+    
     def add_place(self, place):
         """Add a place to the user's owned places."""
         self.places.append(place)
@@ -69,3 +78,11 @@ class User(BaseModel):
             str: Full name (first_name + last_name)
         """
         return f"{self.first_name} {self.last_name}"
+    
+    def hash_password(self, password):
+        """Hashes the password before storing it."""
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+        """Verifies if the provided password matches the hashed password."""
+        return bcrypt.check_password_hash(self.password, password)
