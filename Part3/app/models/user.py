@@ -18,7 +18,7 @@ class User(BaseModel):
         self.places = []
         self.reviews = []
 
-   def hash_password(self, password):
+    def hash_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def verify_password(self, password):
