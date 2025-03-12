@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
-api = Namespace('places', description='Place operations')
+api = Namespace('places', description='Place operations', path='/api/v1/places')
 
 # Define the models for related entities
 amenity_model = api.model('PlaceAmenity', {

@@ -14,7 +14,7 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
-    # region User Management
+    # User 
     def create_user(self, user_data):
         """Create new user with automatic password hashing"""
         user = User(**user_data)  # Password is hashed in User constructor
@@ -33,9 +33,8 @@ class HBnBFacade:
         """Update user details with password re-hashing if needed"""
         self.user_repo.update(user_id, user_data)
         return self.user_repo.get(user_id)
-    # endregion
-
-    # region Amenity Management
+   
+    #Amenity 
     def create_amenity(self, amenity_data):
         """Add new amenity to the system"""
         amenity = Amenity(**amenity_data)
@@ -58,9 +57,8 @@ class HBnBFacade:
         """Modify existing amenity properties"""
         self.amenity_repo.update(amenity_id, amenity_data)
         return self.amenity_repo.get(amenity_id)
-    # endregion
-
-    # region Place Management
+   
+    # Place
     def create_place(self, place_data):
         """Register new rental place"""
         place = Place(**place_data)
@@ -79,9 +77,8 @@ class HBnBFacade:
         """Update place information"""
         self.place_repo.update(place_id, place_data)
         return self.place_repo.get(place_id)
-    # endregion
-
-    # region Review Management
+   
+    # Review 
     def create_review(self, review_data):
         """Create new review for a place"""
         review = Review(**review_data)

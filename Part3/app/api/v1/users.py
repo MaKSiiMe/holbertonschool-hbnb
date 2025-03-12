@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
-api = Namespace('users', description='User operations')
+api = Namespace('users', description='User operations', path='/api/v1/users')
 
 user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
@@ -40,3 +40,25 @@ class UserList(Resource):
 
 @api.route('/<user_id>')
 class UserResource(Resource):
+    @api.response(200, 'User details retrieved successfully')
+    @api.response(404, 'User not found')
+    def get(self, user_id):
+        """Get user details by ID"""
+        user = facade.get_user(user_id)
+        
+        if not user:
+            api.abort(404, "User not found")
+
+        return user.to_dict(), 200
+
+    @api.response(204, 'User successfully deleted')
+    @api.response(404, 'User not found')
+    def delete(self, user_id):
+        """Delete a user by ID"""
+        user = facade.get_user(user_id)
+        
+        if not user:
+            api.abort(404, "User not found")
+
+        facade.delete_user(user_id)
+        return '', 204
