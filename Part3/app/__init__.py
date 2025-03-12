@@ -1,11 +1,10 @@
 from flask import Flask, Blueprint, redirect
 from flask_restx import Api
-from app.extensions import db, bcrypt
+from app.extensions import db, bcrypt, jwt
 from app.api.v1.users import api as users_ns
 from app.api.v1.places import api as places_ns
 from app.api.v1.amenities import api as amenities_ns
 from app.api.v1.reviews import api as reviews_ns
-
 
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
@@ -14,6 +13,11 @@ def create_app(config_class="config.DevelopmentConfig"):
     # Initialize centralized extensions
     db.init_app(app)
     bcrypt.init_app(app)
+    jwt.init_app(app)
+
+    # Creates the database tables
+    with app.app_context():
+        db.create_all()
 
     @app.route('/')
     def root():
