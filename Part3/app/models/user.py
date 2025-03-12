@@ -1,10 +1,14 @@
 # app/models/user.py
 
+from app import db, bcrypt
+import uuid
 import re
 from app.models.BaseModel import BaseModel
 
 class User(BaseModel):
     """Class representing a User in the HBnB application."""
+
+    __tablename__ = 'users'
 
     def __init__(self, first_name, last_name, email, is_admin=False):
         """
@@ -19,6 +23,25 @@ class User(BaseModel):
         Raises:
             ValueError: If any validation fails
         """
+
+        
+        first_name = db.Column(db.String(50), nullable=False)
+        last_name = db.Column(db.String(50), nullable=False)
+        email = db.Column(db.String(120), nullable=False, unique=True)
+        password = db.Column(db.String(128), nullable=False)
+        is_admin = db.Column(db.Boolean, default=False)
+        self.places = []  # List to store places owned by the user
+        self.reviews = []  # List to store reviews written by the user
+
+    def hash_password(self, password):
+        """Hash the password before storing it."""
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+        """Verify the hashed password."""
+        return bcrypt.check_password_hash(self.password, password)
+
+
         super().__init__()
 
         # Validate first_name
@@ -44,13 +67,6 @@ class User(BaseModel):
         # Validate is_admin
         if not isinstance(is_admin, bool):
             raise ValueError("is_admin must be a boolean value")
-
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.is_admin = is_admin
-        self.places = []  # List to store places owned by the user
-        self.reviews = []  # List to store reviews written by the user
 
     def add_place(self, place):
         """Add a place to the user's owned places."""

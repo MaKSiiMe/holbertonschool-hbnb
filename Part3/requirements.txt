@@ -1,2 +1,5 @@
 flask
 flask-restx
+sqlalchemy
+flask-sqlalchemy
+flask-bcrypt

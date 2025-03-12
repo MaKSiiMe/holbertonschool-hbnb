@@ -1,5 +1,6 @@
-
 from app.persistence.repository import InMemoryRepository
+from app.persistence.repository import SQLAlchemyRepository
+from app.persistence.repository import UserRepository
 from app.models.user import User
 from app.models.place import Place
 from app.models.review import Review
@@ -8,16 +9,29 @@ from app.models.amenity import Amenity
 
 class HBnBFacade:
     def __init__(self):
+        self.user_repo = UserRepository()
+
+    def create_user(self, user_data):
+        user = User(**user_data)
+        user.hash_password(user_data['password'])
+        self.user_repo.add(user)
+        return user
+
+    def get_user(self, user_id):
+        return self.user_repo.get(user_id)
+
+    def get_user_by_email(self, email):
+        return self.user_repo.get_user_by_email(email)
+
+
+    def __init__(self):
         self.user_repo = InMemoryRepository()
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
     """
-    User
-    """
     def create_user(self, user_data):
-        """create a new user"""
         try:
             user = User(
             first_name=user_data['first_name'],
@@ -37,7 +51,8 @@ class HBnBFacade:
 
     def get_user_by_email(self, email):
         return self.user_repo.find_by_email(email)
-
+    """
+    
     def update_user(self, user_id, user_data):
         self.user_repo.update(user_id, user_data)
         return self.user_repo.get(user_id)
@@ -48,9 +63,8 @@ class HBnBFacade:
             {'id': 2, 'first_name': 'John', 'last_name': 'Smith', 'email': 'john.smith@example.com'}
         ]
         return users
-    """
-    Amenity
-    """
+
+
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
         self.amenity_repo.add(amenity)
@@ -69,9 +83,7 @@ class HBnBFacade:
         self.amenity_repo.update(amenity_id, amenity_data)
         return self.amenity_repo.get(amenity_id)
 
-    """
-    Place
-    """
+
     def create_place(self, place_data):
         place = Place(**place_data)
         self.place_repo.add(place)
@@ -87,9 +99,7 @@ class HBnBFacade:
         self.place_repo.update(place_id, place_data)
         return self.place_repo.get(place_id)
 
-    """
-    Review
-    """
+
     def create_review(self, review_data):
         review = Review(**review_data)
         self.review_repo.add(review)
