@@ -1,7 +1,6 @@
 # app/models/amenity.py
 
-from app.models.base_model import BaseModel
-
+from app.models.BaseModel import BaseModel
 
 class Amenity(BaseModel):
     """Class representing an Amenity in the HBnB application."""

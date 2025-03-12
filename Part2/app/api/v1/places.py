@@ -1,4 +1,5 @@
-#Part2/app/api/v1/places.py
+#app/api/v1/places.py
+
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
@@ -41,27 +42,37 @@ place_model = api.model('Place', {
 @api.route('/')
 class PlaceList(Resource):
     @api.expect(place_model)
+    @api.response(201, 'Place successfully created')
+    @api.response(400, 'Invalid input data')
     def post(self):
+        """Register a new place"""
         place_data = api.payload
         
-        try:
-            # Validate owner exists
-            owner = facade.get_user(place_data.get("owner_id"))
-            if not owner:
-                return {'error': 'Invalid owner'}, 400
+        user = facade.get_user(place_data.get("owner_id"))
+        if not user:
+            api.abort(400, "Invalid user")
+        
+        invalid_amenities = []
+        for amenity_id in place_data.get("amenities"):
+            amenity = facade.get_amenity(amenity_id)
+            if not amenity:
+                invalid_amenities.append(amenity_id)
+        if invalid_amenities:
+            api.abort(400, f"Invalid amenities: {invalid_amenities}")
 
-            # Create place through facade
+        try:    
             new_place = facade.create_place(place_data)
-            
-            # Return simplified response
-            return {
-                'id': new_place.id,
-                'title': new_place.title,
-                'owner_id': new_place.owner.id
-            }, 201
-            
-        except ValueError as e:
-            return {'error': str(e)}, 400
+            user.add_place(new_place.id)
+            user_data = user.to_dict()
+            facade.update_user(user.id, user_data)
+        except (ValueError, TypeError) as e:
+            api.abort(400, str(e))
+
+        return {'id': new_place.id, 'title': new_place.title,
+                'description': new_place.description, 'price': new_place.price,
+                'latitude': new_place.latitude,
+                'longitude': new_place.longitude,
+                'owner_id': new_place.owner_id}, 201
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
@@ -81,7 +92,7 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         
         if not place:
-            return {'error': 'Place not found'}, 404
+            api.abort(404, "Place not found")
 
         user = facade.get_user(place.owner_id)
         user_data = user.to_dict()
@@ -107,22 +118,22 @@ class PlaceResource(Resource):
         
         place = facade.get_place(place_id)
         if not place:
-            return {'error': 'Place not found'}, 404
+            api.abort(404, "Place not found")
         if place_data.get("owner_id") != place.owner_id:
-            return {'error': 'Owner can not be modified'}, 400
+            api.abort(400, "Owner can not be modified")
         if place_data.get("latitude") != place.latitude or place_data.get("longitude") != place.longitude:
-            return {'error': 'Latitude and Longitude can not been modified'}, 400
+            api.abort(400, "Latitude and Longitude can not been modified")
         invalid_amenities = []
         for amenity_id in place_data.get("amenities"):
             amenity = facade.get_amenity(amenity_id)
             if not amenity:
                 invalid_amenities.append(amenity_id)
         if invalid_amenities:
-            return {'error': f"Invalid amenities: {invalid_amenities}"}, 400
+            api.abort(400, f"Invalid amenities: {invalid_amenities}")
 
         try:   
             facade.update_place(place_id, place_data)
         except (ValueError, TypeError) as e:
-            return {'error': str(e)}, 400
+            api.abort(400, str(e))
         
         return {"message": "Place updated successfully"}, 200
