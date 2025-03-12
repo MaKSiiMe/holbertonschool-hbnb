@@ -10,6 +10,14 @@ from app.models.amenity import Amenity
 class HBnBFacade:
     def __init__(self):
         self.user_repo = UserRepository()
+        self.user_repo = InMemoryRepository()
+        self.place_repo = InMemoryRepository()
+        self.review_repo = InMemoryRepository()
+        self.amenity_repo = InMemoryRepository()
+
+    """
+    User
+    """
 
     def create_user(self, user_data):
         user = User(**user_data)
@@ -23,36 +31,6 @@ class HBnBFacade:
     def get_user_by_email(self, email):
         return self.user_repo.get_user_by_email(email)
 
-
-    def __init__(self):
-        self.user_repo = InMemoryRepository()
-        self.place_repo = InMemoryRepository()
-        self.review_repo = InMemoryRepository()
-        self.amenity_repo = InMemoryRepository()
-
-    """
-    def create_user(self, user_data):
-        try:
-            user = User(
-            first_name=user_data['first_name'],
-            last_name=user_data['last_name'],
-            email=user_data['email'],
-            is_admin=user_data.get('is_admin', False)
-        )
-            self.user_repo.add(user)
-            return user
-        except ValueError as e:
-            raise ValueError(f"Error creating user: {e}")
-        except Exception as e:
-            raise Exception(f"Unexpected error creating user: {e}")
-
-    def get_user(self, user_id):
-        return self.user_repo.get(user_id)
-
-    def get_user_by_email(self, email):
-        return self.user_repo.find_by_email(email)
-    """
-    
     def update_user(self, user_id, user_data):
         self.user_repo.update(user_id, user_data)
         return self.user_repo.get(user_id)
@@ -64,6 +42,9 @@ class HBnBFacade:
         ]
         return users
 
+    """
+    Amenity
+    """
 
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
@@ -83,6 +64,9 @@ class HBnBFacade:
         self.amenity_repo.update(amenity_id, amenity_data)
         return self.amenity_repo.get(amenity_id)
 
+    """
+    Place
+    """
 
     def create_place(self, place_data):
         place = Place(**place_data)
@@ -99,6 +83,9 @@ class HBnBFacade:
         self.place_repo.update(place_id, place_data)
         return self.place_repo.get(place_id)
 
+    """
+    Review
+    """
 
     def create_review(self, review_data):
         review = Review(**review_data)
