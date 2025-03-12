@@ -1,9 +1,7 @@
 
 from app.persistence.repository import SQLAlchemyRepository
-from app.models.user import User
-from app.models.place import Place
-from app.models.review import Review
-from app.models.amenity import Amenity
+from app.models import User, Place, Review, Amenity
+from app.extensions import db
 
 class HBnBFacade:
     def __init__(self):
@@ -16,7 +14,6 @@ class HBnBFacade:
     User
     """
     def create_user(self, user_data):
-        """create a new user"""
         user = User(**user_data)
         self.user_repository.add(user)
         return user
