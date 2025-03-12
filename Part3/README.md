@@ -1,43 +1,90 @@
 # 🏠 HBnB Project   
 
-## HBNB - PART 3: Enhanced Backend with Authentication and Database Integration  - PART 3
+## Project Objective: Web Application  - PART 2
 
 ## Description
 
-Welcome to Part 3 of the HBNB Project, where we enhance the backend by introducing authentication, authorization, and database integration. This part focuses on securing the API, implementing persistent storage with SQLAlchemy, and preparing the system for production with MySQL.
+The **HBnB** project is a full-stack web application that simulates a simplified version of Airbnb. This second phase focuses on building a RESTful API with Flask, implementing persistent data storage using SQLAlchemy, and structuring the application for scalability and maintainability.
 
 ## Features
 
--Objectives
-
-Implement JWT-based authentication using Flask-JWT-Extended.
-
-Introduce role-based access control with an is_admin attribute.
-
-Replace in-memory storage with SQLite for development and prepare for MySQL in production.
-
-Refactor CRUD operations to interact with a persistent database.
-
-Design and visualize the database schema using Mermaid.js.
-
-Ensure data consistency and enforce validation constraints.
+- **User Authentication & Management**: Secure user registration, login, and role-based access control.
+- **CRUD Operations**: Create, Read, Update, and Delete functionality for Places, Users, Reviews, and Amenities.
+- **RESTful API**: Versioned endpoints for seamless integration with frontend or third-party services.
+- **Data Persistence**: SQLAlchemy ORM for robust database management.
+- **Facade Pattern**: Simplified service layer interactions via `app/services/facade.py`.
 
 ## Project Structure
 
 ```
-PART3/
-│── app/
-│   ├── __init__.py   # Application Factory
-│   ├── models/       # Data model management
-│   ├── routes/       # API routes
-│   ├── static/       # Static files (CSS, JS, images)
-│   ├── templates/    # HTML templates
-│
-│── config.py         # Configuration management
-│── run.py            # Main application entry point
-│── requirements.txt  # Dependencies list
-│── README.md         # Project documentation
+hbnb/
+├── app/
+│   ├── __init__.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── v1/
+│   │       ├── __init__.py
+│   │       ├── users.py
+│   │       ├── places.py
+│   │       ├── reviews.py
+│   │       ├── amenities.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── place.py
+│   │   ├── review.py
+│   │   ├── amenity.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── facade.py
+│   ├── persistence/
+│       ├── __init__.py
+│       ├── repository.py
+├── run.py
+├── config.py
+├── requirements.txt
+├── README.md
 ```
+
+## Core Components
+
+### Models
+
+#### `BaseModel` (Base Class)
+- **Attributes**:
+  - `id` (UUID4): Unique identifier.
+  - `created_at` (DateTime): Creation timestamp.
+  - `updated_at` (DateTime): Last update timestamp.
+- **Methods**:
+  - `save()`: Updates `updated_at` on changes.
+  - `update(**kwargs)`: Updates attributes via dictionary.
+
+#### `User` (Inherits `BaseModel`)
+- **Attributes**:
+  - `first_name`, `last_name` (String, max 50 chars)
+  - `email` (String, unique, validated format)
+  - `is_admin` (Boolean, default `False`)
+
+#### `Amenity` (Inherits `BaseModel`)
+- **Attributes**:
+  - `name` (String, max 50 chars)
+  
+#### `Place` (Inherits `BaseModel`)
+- **Attributes**:
+  - `title` (String, max 100 chars)
+  - `description` (String, optional)
+  - `price` (Float, must be positive)
+  - `latitude`, `longitude` (Float, geolocation)
+  - `owner` (Relationship to `User`)
+- **Methods**:
+  - `add_review()`, `add_amenity()`
+
+#### `Review` (Inherits `BaseModel`)
+- **Attributes**:
+  - `text` (String, required)
+  - `rating` (Integer, 1-5)
+  - `place` (Relationship to `Place`)
+  - `user` (Relationship to `User`)
 
 ### 👤 Contributors:  
 - [David Tolza](https://github.com/VidadTol)  

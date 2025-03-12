@@ -1,69 +1,81 @@
-# app/models/review.py
 
-from app.models.BaseModel import BaseModel
-from app.models.place import Place
-from app.models.user import User
+#!/usr/bin/python3
+"""This module for the Class Review"""
+
+
+from .base import BaseModel
+
 
 class Review(BaseModel):
-    """Class representing a Review in the HBnB application."""
-
-    def __init__(self, text, rating, place, user):
-        """
-        Initialize a new Review instance.
-
-        Args:
-            text (str): Content of the review (required)
-            rating (int): Rating given to the place (1-5)
-            place (Place): Place instance being reviewed
-            user (User): User instance of the reviewer
-
-        Raises:
-            ValueError: If any validation fails
-        """
+    """To create attibutes for the Class"""
+    def __init__(self, place_id, user_id, rating, text):
         super().__init__()
-
-        # Validate text
-        if not text or not isinstance(text, str):
-            raise ValueError("Review text is required and must be a string")
-
-        # Validate rating
-        if not isinstance(rating, int):
-            raise ValueError("Rating must be an integer")
-        if rating < 1 or rating > 5:
-            raise ValueError("Rating must be between 1 and 5")
-
-        # Validate place
-        if not isinstance(place, Place):
-            raise ValueError("Place must be a Place instance")
-
-        # Validate user
-        if not isinstance(user, User):
-            raise ValueError("User must be a User instance")
-
-        self.text = text
+        self.place_id = place_id
+        self.user_id = user_id
         self.rating = rating
-        self.place = place
-        self.user = user
+        self.text = text
 
-        # Add this review to the place's reviews
-        place.add_review(self)
-        # Add this review to the user's reviews
-        user.add_review(self)
+    def update(self, data):
+        if 'text' in data:
+            self.text = data['text']
+        if 'rating' in data:
+            self.rating = data['rating']
 
-    def update_rating(self, new_rating):
-        """
-        Update the review rating.
+    @property
+    def text(self):
+        return self._text
 
-        Args:
-            new_rating (int): New rating value (1-5)
+    @text.setter
+    def text(self, value):
+        if not isinstance(value, str):
+            raise TypeError("Text is not valid")
+        if not value:
+            raise TypeError("Text is required")
+        self._text = value
 
-        Raises:
-            ValueError: If rating is invalid
-        """
-        if not isinstance(new_rating, int):
-            raise ValueError("Rating must be an integer")
-        if new_rating < 1 or new_rating > 5:
+    @property
+    def rating(self):
+        return self._rating
+
+    @rating.setter
+    def rating(self, value):
+        if not value:
+            raise TypeError("Rating is required")
+        if not isinstance(value, int):
+            raise TypeError("Rating is not valid")
+        if value < 1 or value > 5:
             raise ValueError("Rating must be between 1 and 5")
+        self._rating = value
 
-        self.rating = new_rating
-        self.save()  # Update the updated_at timestamp
+    @property
+    def place_id(self):
+        return self._place_id
+
+    @place_id.setter
+    def place_id(self, value):
+        if not value:
+            raise TypeError("Place is required")
+        if not isinstance(value, str):
+            raise TypeError("Place is not valid")
+        self._place_id = value
+
+    @property
+    def user_id(self):
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, value):
+        if not value:
+            raise TypeError("User is required")
+        if not isinstance(value, str):
+            raise TypeError("User is not valid")
+        self._user_id = value
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "text": self.text,
+            "rating": self.rating,
+            "user_id": self.user_id,
+            "place_id": self.place_id
+        }
