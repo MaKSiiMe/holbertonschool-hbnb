@@ -1,13 +1,24 @@
 # app/models/review.py
 
 from app.models.BaseModel import BaseModel
-from app.models.place import Place
-from app.models.user import User
+from app.extensions import db
+from sqlalchemy.orm import relationship
 
-class Review(BaseModel):
+
+class Review(BaseModel, db.Model):
     """Class representing a Review in the HBnB application."""
+    __tablename__ = 'reviews'
 
-    def __init__(self, text, rating, place, user):
+    id = db.Column(db.String(36), primary_key=True)
+    text = db.Column(db.String(255), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    place_id = db.Column(db.String(36), db.ForeignKey('places.id'), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    
+    place = relationship('Place', back_populates='reviews')
+    user = relationship('User', back_populates='reviews')
+
+    def __init__(self, text, rating, place_id, user_id):
         """
         Initialize a new Review instance.
 
@@ -32,23 +43,10 @@ class Review(BaseModel):
         if rating < 1 or rating > 5:
             raise ValueError("Rating must be between 1 and 5")
 
-        # Validate place
-        if not isinstance(place, Place):
-            raise ValueError("Place must be a Place instance")
-
-        # Validate user
-        if not isinstance(user, User):
-            raise ValueError("User must be a User instance")
-
         self.text = text
         self.rating = rating
-        self.place = place
-        self.user = user
-
-        # Add this review to the place's reviews
-        place.add_review(self)
-        # Add this review to the user's reviews
-        user.add_review(self)
+        self.place_id = place_id
+        self.user_id = user_id
 
     def update_rating(self, new_rating):
         """

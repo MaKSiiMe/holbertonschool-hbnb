@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from app.extensions import bcrypt
-
+from app.extensions import db, bcrypt, jwt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 api = Namespace('users', description='User operations')
 
@@ -9,6 +9,12 @@ api = Namespace('users', description='User operations')
 user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
+    'email': fields.String(required=True, description='Email of the user'),
+    'password': fields.String(required=True, description='Password of the user')
+})
+
+# Defining login_model before using it
+login_model = api.model('Login', {
     'email': fields.String(required=True, description='Email of the user'),
     'password': fields.String(required=True, description='Password of the user')
 })
@@ -39,12 +45,12 @@ class UserList(Resource):
             """ Create a new user"""
             new_user = facade.create_user(user_data)
             return {'id': new_user.id, 'message': 'User successfully created'}, 201
-        except facade.UserCreationError as e:
+        except Exception as e:
             return {'error': str(e)}, 400
         except ValueError:
             return {'error': 'Invalid input data'}, 400
         
-    
+    @jwt_required()
     @api.response(200, 'User details retrieved successfully')
     def get(self):
         users = facade.get_all_users()
@@ -56,6 +62,7 @@ class UserList(Resource):
     
 @api.route('/<user_id>')
 class UserResource(Resource):
+    @jwt_required()
     @api.response(200, 'User details retrieved successfully')
     @api.response(404, 'User not found')
     def get(self, user_id):
@@ -68,6 +75,7 @@ class UserResource(Resource):
                 'last_name': user.last_name,
                 'email': user.email}, 200
     
+    @jwt_required()
     @api.expect(user_model, validate=True)
     @api.response(200, 'User sucessfully updated')
     @api.response(404, 'User not found')
@@ -90,3 +98,16 @@ class UserResource(Resource):
                 'first_name': updated_user.first_name,
                 'last_name': updated_user.last_name,
                 'email': updated_user.email}, 200
+
+@api.route('/login')
+class LoginResource(Resource):
+    @api.doc(description="User login")
+    @api.expect(login_model)
+    def post(self):
+        data = api.payload
+        user = facade.get_user_by_email(data['email'])
+        if user and bcrypt.check_password_hash(user.password, data['password']):
+            access_token = create_access_token(identity={'id': user.id, 'is_admin':user.is_admin})
+            return {'access_token': access_token}, 200
+        else:
+            return {'error': 'Invalid credentials'}, 401

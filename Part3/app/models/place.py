@@ -1,13 +1,27 @@
 # app/models/place.py
 
 from app.models.BaseModel import BaseModel
-from app.models.user import User
+from app.extensions import db
+from sqlalchemy.orm import relationship
 
 
-class Place(BaseModel):
+class Place(BaseModel, db.Model):
     """Class representing a Place in the HBnB application."""
+    __tablename__ = 'places'
 
-    def __init__(self, title, description, price, latitude, longitude, owner):
+    id = db.Column(db.String(36), primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255))
+    price = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    owner = db.relationship('User', back_populates='places')
+    reviews = db.relationship('Review', back_populates='place')
+    amenities = db.relationship('Amenity', secondary='place_amenity', back_populates='places')
+
+
+    def __init__(self, title, description, price, latitude, longitude, owner_id):
         """
         Initialize a new Place instance.
 
@@ -52,18 +66,12 @@ class Place(BaseModel):
         if longitude < -180.0 or longitude > 180.0:
             raise ValueError("Longitude must be between -180.0 and 180.0")
 
-        # Validate owner
-        if not isinstance(owner, User):
-            raise ValueError("Owner must be a User instance")
-
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner = owner
-        self.reviews = []  # List to store related reviews
-        self.amenities = []  # List to store related amenities
+        self.owner_id = owner_id
 
         # Add this place to the owner's places
         owner.add_place(self)

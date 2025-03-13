@@ -1,10 +1,21 @@
 # app/models/amenity.py
-
 from app.models.BaseModel import BaseModel
+from app.extensions import db
+from sqlalchemy.orm import relationship
 
+# Association table for the Many-to-Many relationship
+place_amenity = db.Table('place_amenity',
+    db.Column('place_id', db.String(36), db.ForeignKey('places.id'), primary_key=True),
+    db.Column('amenity_id', db.String(36), db.ForeignKey('amenities.id'), primary_key=True)
+)
 
-class Amenity(BaseModel):
+class Amenity(BaseModel, db.Model):
     """Class representing an Amenity in the HBnB application."""
+    __tablename__ = 'amenities'
+
+    id = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    places = relationship('Place', secondary=place_amenity, back_populates='amenities')
 
     def __init__(self, name):
         """
@@ -21,41 +32,8 @@ class Amenity(BaseModel):
         # Validate name
         if not name or not isinstance(name, str):
             raise ValueError("Amenity name is required and must be a string")
-        if len(name) > 50:
-            raise ValueError("Amenity name cannot exceed 50 characters")
+        if len(name) > 128:
+            raise ValueError("Amenity name cannot exceed 128 characters")
 
         self.name = name
-        self.places = []  # List of places that have this amenity
-
-    def add_place(self, place):
-        """
-        Add a place to the amenity's places and establish
-        the bi-directional relationship.
-
-        Args:
-            place (Place): Place instance to add
-        """
-        # Avoid circular import
-        from app.models.place import Place
-
-        if not isinstance(place, Place):
-            raise ValueError("Place must be a Place instance")
-
-        if place not in self.places:
-            self.places.append(place)
-            # Add this amenity to the place's amenities if not already present
-            if self not in place.amenities:
-                place.add_amenity(self)
-
-    def remove_place(self, place):
-        """
-        Remove a place from the amenity's places.
-
-        Args:
-            place (Place): Place instance to remove
-        """
-        if place in self.places:
-            self.places.remove(place)
-            # Remove this amenity from the place's amenities if present
-            if self in place.amenities:
-                place.remove_amenity(self)
+ 
