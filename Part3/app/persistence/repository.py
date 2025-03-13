@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 from app import db
 from app.models.user import User
+from app.models.place import Place
+from app.models.review import Review
+from app.models.amenity import Amenity
 
 class Repository(ABC):
     @abstractmethod
@@ -94,3 +97,15 @@ class UserRepository(SQLAlchemyRepository):
 
     def get_user_by_email(self, email):
         return self.model.query.filter_by(email=email).first()
+
+class PlaceRepository(SQLAlchemyRepository):
+    def __init__(self):
+        super().__init__(Place)
+
+class ReviewRepository(SQLAlchemyRepository):
+    def __init__(self):
+        super().__init__(Review)
+
+class AmenityRepository(SQLAlchemyRepository):
+    def __init__(self):
+        super().__init__(Amenity)
