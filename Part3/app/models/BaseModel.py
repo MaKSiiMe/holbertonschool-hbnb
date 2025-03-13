@@ -1,19 +1,29 @@
-import uuid
 from datetime import datetime
+import uuid
+from app import db  # Import du module SQLAlchemy
 
-class BaseModel:
-    def __init__(self):
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+class BaseModel(db.Model):
+    """Base model for all other models"""
+
+    __abstract__ = True  # Indique que ce modèle ne sera pas créé en tant que table
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def save(self):
-        """Update the updated_at timestamp whenever the object is modified"""
-        self.updated_at = datetime.now()
+        """Enregistre ou met à jour l'objet dans la base de données."""
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        """Supprime l'objet de la base de données."""
+        db.session.delete(self)
+        db.session.commit()
 
     def update(self, data):
-        """Update the attributes of the object based on the provided dictionary"""
+        """Mise à jour des attributs avec un dictionnaire de valeurs"""
         for key, value in data.items():
             if hasattr(self, key):
                 setattr(self, key, value)
-        self.save()  # Update the updated_at timestamp
+        self.save()  # Sauvegarde les modifications

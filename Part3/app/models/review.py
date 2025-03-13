@@ -1,11 +1,24 @@
 # app/models/review.py
 
+from app import db
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 from app.models.BaseModel import BaseModel
-from app.models.place import Place
-from app.models.user import User
 
-class Review(BaseModel):
+class Review(BaseModel, db.Model):
     """Class representing a Review in the HBnB application."""
+    
+    __tablename__ = 'reviews'
+
+    id = Column(Integer, primary_key=True)
+    text = Column(String(1000), nullable=False)
+    rating = Column(Integer, nullable=False)
+    place_id = Column(Integer, ForeignKey('places.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+
+    # Relations
+    place = relationship('Place', back_populates='reviews')
+    user = relationship('User', back_populates='reviews')
 
     def __init__(self, text, rating, place, user):
         """
@@ -22,48 +35,32 @@ class Review(BaseModel):
         """
         super().__init__()
 
-        # Validate text
-        if not text or not isinstance(text, str):
-            raise ValueError("Review text is required and must be a string")
+        self.set_text(text)
+        self.set_rating(rating)
 
-        # Validate rating
-        if not isinstance(rating, int):
-            raise ValueError("Rating must be an integer")
-        if rating < 1 or rating > 5:
-            raise ValueError("Rating must be between 1 and 5")
-
-        # Validate place
         if not isinstance(place, Place):
             raise ValueError("Place must be a Place instance")
-
-        # Validate user
         if not isinstance(user, User):
             raise ValueError("User must be a User instance")
 
-        self.text = text
-        self.rating = rating
         self.place = place
         self.user = user
 
-        # Add this review to the place's reviews
-        place.add_review(self)
-        # Add this review to the user's reviews
-        user.add_review(self)
+    def set_text(self, new_text):
+        """Update the review text."""
+        if not new_text or not isinstance(new_text, str):
+            raise ValueError("Review text is required and must be a string")
+        if len(new_text) > 1000:
+            raise ValueError("Review text cannot exceed 1000 characters")
+        self.text = new_text
 
-    def update_rating(self, new_rating):
-        """
-        Update the review rating.
-
-        Args:
-            new_rating (int): New rating value (1-5)
-
-        Raises:
-            ValueError: If rating is invalid
-        """
+    def set_rating(self, new_rating):
+        """Update the review rating."""
         if not isinstance(new_rating, int):
             raise ValueError("Rating must be an integer")
         if new_rating < 1 or new_rating > 5:
             raise ValueError("Rating must be between 1 and 5")
-
         self.rating = new_rating
-        self.save()  # Update the updated_at timestamp
+
+    def __repr__(self):
+        return f"<Review {self.id} - {self.rating} stars>"
