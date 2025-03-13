@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required
 
 api = Namespace('places', description='Place management operations')
 
@@ -28,6 +29,7 @@ place_model = api.model('Place', {
 
 @api.route('/')
 class PlaceList(Resource):
+    @jwt_required()
     @api.expect(place_model)
     @api.response(201, 'Place created successfully')
     @api.response(400, 'Invalid input data')
@@ -47,6 +49,7 @@ class PlaceList(Resource):
 
 @api.route('/<string:place_id>')
 class PlaceResource(Resource):
+    @jwt_required()
     @api.response(200, 'Success')
     @api.response(404, 'Place not found')
     def get(self, place_id):
