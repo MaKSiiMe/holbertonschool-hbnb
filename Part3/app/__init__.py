@@ -7,6 +7,17 @@ from flask_bcrypt import Bcrypt
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 
+# Import models
+from app.models.user import User
+from app.models.place import Place
+from app.models.review import Review
+from app.models.amenity import Amenity
+
+# Import services
+from app.services.facade import HBnBFacade
+
+facade = HBnBFacade()
+
 def create_app(config_class=config['default']):
     app = Flask(__name__)
     
@@ -39,4 +50,3 @@ def create_app(config_class=config['default']):
     app.register_blueprint(api_blueprint)
 
     return app
-
