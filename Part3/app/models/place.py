@@ -74,7 +74,7 @@ class Place(BaseModel, db.Model):
         self.owner_id = owner_id
 
         # Add this place to the owner's places
-        owner.add_place(self)
+        owner_id.add_place(self)
 
     def add_review(self, review):
         """Add a review to the place."""
