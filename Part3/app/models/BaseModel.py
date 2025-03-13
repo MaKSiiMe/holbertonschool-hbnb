@@ -9,6 +9,11 @@ class BaseModel(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    def __init__(self):
+        self.id = str(uuid.uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+
     def save(self):
         """Persist the object to the database."""
         db.session.add(self)
@@ -20,3 +25,8 @@ class BaseModel(db.Model):
             if hasattr(self, key):
                 setattr(self, key, value)
         self.save()  # Update the updated_at timestamp
+
+    def delete(self):
+        """Delete the object from the database."""
+        db.session.delete(self)
+        db.session.commit()
