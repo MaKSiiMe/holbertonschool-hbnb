@@ -36,6 +36,7 @@ class ReviewList(Resource):
             # Validate the rating in the review data
             if 'rating' in review_data:
                 validate_rating(review_data['rating'])
+
             # retrieving location information
             place = facade.get_place(review_data['place_id'])
             if not place:
@@ -53,7 +54,7 @@ class ReviewList(Resource):
             # Adding user_id to review_data:
             review_data['user_id'] = current_user_id
 
-
+            # Create the new notice
             new_review = facade.create_review(review_data)
             return {
                 "message": "Review successfully created",
