@@ -15,7 +15,8 @@ class HBnBFacade:
     """
     def create_user(self, user_data):
         user = User(**user_data)
-        self.user_repository.add(user)
+        db.session.add(user)
+        db.session.commit()
         return user
 
     def get_user_by_id(self, user_id):
@@ -36,7 +37,8 @@ class HBnBFacade:
     """
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
-        self.amenity_repository.add(amenity)
+        db.session.add(amenity)
+        db.session.commit()
         return amenity
 
     def get_amenity_by_name(self, name):
@@ -57,7 +59,8 @@ class HBnBFacade:
     """
     def create_place(self, place_data):
         place = Place(**place_data)
-        self.place_repository.add(place)
+        db.session.add(place)
+        db.session.commit()
         return place
 
     def get_place(self, place_id):
@@ -71,11 +74,45 @@ class HBnBFacade:
         return self.place_repository.get(place_id)
 
     """
+    Place-Amenity Relationship Management
+    """
+    def add_amenity_to_place(self, place_id, amenity_id):
+        """Ajoute une commodité (amenity) à un lieu (place)."""
+        from app.models.place import Place
+        from app.models.amenity import Amenity
+
+        place = self.get_place(place_id)
+        amenity = self.get_amenity(amenity_id)
+
+        if place and amenity:
+            place.amenities.append(amenity)
+            db.session.commit()
+            return place
+        return None
+
+    def remove_amenity_from_place(self, place_id, amenity_id):
+        """Supprime une commodité (amenity) d'un lieu (place)."""
+        from app.models.place import Place
+        from app.models.amenity import Amenity
+
+        place = self.get_place(place_id)
+        amenity = self.get_amenity(amenity_id)
+
+        if place and amenity and amenity in place.amenities:
+            place.amenities.remove(amenity)
+            db.session.commit()
+            return place
+        return None
+
+
+
+    """
     Review
     """
     def create_review(self, review_data):
         review = Review(**review_data)
-        self.review_repository.add(review)
+        db.session.add(review)
+        db.session.commit()
         return review
 
     def get_review(self, review_id):
