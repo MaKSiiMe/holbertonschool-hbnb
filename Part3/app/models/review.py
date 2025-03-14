@@ -43,6 +43,14 @@ class Review(BaseModel, db.Model):
         if rating < 1 or rating > 5:
             raise ValueError("Rating must be between 1 and 5")
 
+        # Validation place_id
+        if not place_id or not isinstance(place_id, str) or len(place_id) != 36:
+            raise ValueError("Invalid place_id")
+
+        # Validation user_id
+        if not user_id or not isinstance(user_id, str) or len(user_id) != 36:
+            raise ValueError("Invalid user_id")
+
         self.text = text
         self.rating = rating
         self.place_id = place_id
