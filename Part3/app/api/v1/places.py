@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('places', description='Place management operations')
 
@@ -33,10 +33,18 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place created successfully')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Forbidden')
     def post(self):
         """Create a new Place."""
         try:
-            new_place = facade.create_place(api.payload)
+            place_data = api.payload
+            current_user_id = get_jwt_identity()['id']
+
+            # Validation of the ownership of the place
+            if place_data['owner_id'] != current_user_id:
+                return {'message': 'You are not authorized to create a place for this owner'}, 403
+
+            new_place = facade.create_place(place_data)
             return new_place.to_dict(), 201
         except ValueError as e:
             return {'message': str(e)}, 400
@@ -63,9 +71,21 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input')
+    @api.response(403, 'Forbidden')
     def put(self, place_id):
         """Update a Place (partial updates allowed)."""
         try:
+            place_data = api.payload
+            current_user_id = get_jwt_identity()['id']
+
+            place = facade.get_place(place_id)
+            if not place:
+                return {'message': 'Place not found'}, 404
+
+            # Validation of the ownership of the place
+            if place.owner_id != current_user_id:
+                return {'message': 'You are not authorized to update this place'}, 403
+
             updated_place = facade.update_place(place_id, api.payload)
             return {'message': 'Place updated successfully'}, 200
         except ValueError as e:
