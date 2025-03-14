@@ -94,3 +94,7 @@ class HBnBFacade:
     def delete_review(self, review_id):
         self.review_repository.delete(review_id)
         return self.review_repository.get_all()
+    
+    def get_review_by_user_and_place(user_id, place_id):
+        """Get a review by user ID and place ID"""
+        return Review.query.filter_by(user_id=user_id, place_id=place_id).first()
