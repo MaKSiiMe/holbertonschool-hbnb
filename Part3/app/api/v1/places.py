@@ -51,9 +51,9 @@ class PlaceList(Resource):
 
     @api.response(200, 'Success')
     def get(self):
-        """Get all Places (summary)."""
+        """Get all Places"""
         places = facade.get_all_places()
-        return [place.to_summary_dict() for place in places], 200
+        return [place.to_dict() for place in places], 200
 
 @api.route('/<string:place_id>')
 class PlaceResource(Resource):
