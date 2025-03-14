@@ -25,7 +25,7 @@ class ReviewList(Resource):
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
-    @api.response(403, 'Forbiffen')
+    @api.response(403, 'Forbidden')
     @api.response(404, 'Place not found')
     def post(self):
         """Register a new review"""
@@ -90,10 +90,12 @@ class ReviewResource(Resource):
             return {"error": "Review not found"}, 404
         return {"data": review.to_dict()}, 200
 
+    @jwt_required()
     @api.expect(review_model)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Forbidden')
     def put(self, review_id):
         """Update a review"""
         review_update = api.payload
@@ -103,9 +105,18 @@ class ReviewResource(Resource):
             if 'rating' in review_update:
                 validate_rating(review_update['rating'])
 
-            updated_review = facade.update_review(review_id, review_update)
+            # Retrieve the review
+            review = facade.get_review(review_id)
             if not updated_review:
                 return {"error": "Review not found"}, 404
+            
+            # Check review ownership
+            current_user_id = get_jwt_identity()['id']
+            if review.user_id != current_user_id:
+                return {"error": "You are not authorized to update this review"}, 403
+
+            # Update review
+            updated_review = facade.update_review(review_id, review_update)
 
             return {
                 "message": "Review updated successfully",
