@@ -25,14 +25,34 @@ class ReviewList(Resource):
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Forbiffen')
+    @api.response(404, 'Place not found')
     def post(self):
         """Register a new review"""
         review_data = api.payload
+        current_user_id = get_jwt_identity()['id']
 
         try:
             # Validate the rating in the review data
             if 'rating' in review_data:
                 validate_rating(review_data['rating'])
+            # retrieving location information
+            place = facade.get_place(review_data['place_id'])
+            if not place:
+                return {'error': 'Place not found'}, 404
+
+            # Verification of the ownership of the place
+            if place.owner_id == current_user_id:
+                return {'error': 'You cannot review your own place'}, 403
+            
+            # verification of multiple assessments
+            existing_review = facade.get_review_by_user_and_place(current_user_id, review_data['place_id'])
+            if existing_review:
+                return {'error': 'You have already reviewed this place'}, 400
+
+            # Adding user_id to review_data:
+            review_data['user_id'] = current_user_id
+
 
             new_review = facade.create_review(review_data)
             return {
