@@ -1,0 +1,53 @@
+import json
+from app import create_app
+
+app = create_app()
+client = app.test_client()
+
+def test_create_amenity():
+    response = client.post('/api/v1/amenities/', json={"name": "Pool"})
+    assert response.status_code == 201
+    assert response.json["name"] == "Pool"
+
+def test_get_amenities():
+    response = client.get('/api/v1/amenities/')
+    assert response.status_code == 200
+
+
+def test_create_user():
+    # Test user creation
+    user_data = {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "password": "secure123"
+    }
+    response = client.post('/api/v1/users/', json=user_data)
+    assert response.status_code == 201
+    assert response.json["email"] == "john@example.com"
+
+def test_get_user():
+    # First create a user
+    client.post('/api/v1/users/', json={
+        "name": "Test User",
+        "email": "test@example.com",
+        "password": "test123"
+    })
+    
+    # Test retrieving the user
+    response = client.get('/api/v1/users/1')
+    assert response.status_code == 200
+    assert response.json["id"] == 1
+
+def test_update_user():
+    # Create and update a user
+    client.post('/api/v1/users/', json={
+        "name": "Original Name",
+        "email": "original@example.com",
+        "password": "pass123"
+    })
+    
+    updated_data = {"name": "Updated Name"}
+    response = client.put('/api/v1/users/1', json=updated_data)
+    assert response.status_code == 200
+    assert response.json["name"] == "Updated Name"
+

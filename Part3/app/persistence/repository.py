@@ -1,3 +1,5 @@
+#app/persistence/repository.py
+
 from abc import ABC, abstractmethod
 from app.extensions import db  # Assuming you have set up SQLAlchemy in your Flask app
 from app.models import User, Place, Review, Amenity  # Import your models
