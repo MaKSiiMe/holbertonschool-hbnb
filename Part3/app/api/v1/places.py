@@ -67,6 +67,7 @@ class PlaceResource(Resource):
             api.abort(404, 'Place not found')
         return place.to_detail_dict(), 200
 
+    @jwt_required()
     @api.expect(place_model)
     @api.response(200, 'Place updated')
     @api.response(404, 'Place not found')
@@ -82,7 +83,7 @@ class PlaceResource(Resource):
             if not place:
                 return {'message': 'Place not found'}, 404
 
-            # Validation of the ownership of the place
+            # Verification of the ownership of the place
             if place.owner_id != current_user_id:
                 return {'message': 'You are not authorized to update this place'}, 403
 
