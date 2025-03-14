@@ -1,7 +1,8 @@
+#app/persistence/repository.py
+
 from abc import ABC, abstractmethod
 from app.extensions import db  # Assuming you have set up SQLAlchemy in your Flask app
-#from app.models import User, Place, Review, Amenity
-
+from app.models import User, Place, Review, Amenity  # Import your models
 
 class Repository(ABC):
     @abstractmethod
@@ -29,7 +30,7 @@ class Repository(ABC):
         pass
 
 
-#class InMemoryRepository(Repository):
+class InMemoryRepository(Repository):
     def __init__(self):
         self._storage = {}
 
@@ -89,4 +90,4 @@ class SQLAlchemyRepository(Repository):
         return self.model.query.filter(getattr(self.model, attr_name) == attr_value).first()
     
     def find_by_email(self, email):
-        return self.model.query.filter(self.model.email == email).first()
+        return self.model.query.filter_by(email=email).first()
