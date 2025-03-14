@@ -10,6 +10,7 @@ from app.api.v1.places import api as places_ns
 from app.api.v1.amenities import api as amenities_ns
 from app.api.v1.reviews import api as reviews_ns
 from app.api.v1.auth import api as auth_ns
+from app.api.v1.admin import api as admin_ns
 
 jwt = JWTManager()
 migrate = Migrate()
@@ -43,6 +44,7 @@ def create_app(config_class="development"):
     api.add_namespace(places_ns, path='/places')
     api.add_namespace(amenities_ns, path='/amenities')
     api.add_namespace(reviews_ns, path='/reviews')
+    api.add_namespace(admin_ns, path='/admin')
     
     #reigister the blueprint with the app
     app.register_blueprint(api_blueprint)
