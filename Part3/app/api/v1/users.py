@@ -79,20 +79,25 @@ class UserResource(Resource):
     @api.expect(user_model, validate=True)
     @api.response(200, 'User sucessfully updated')
     @api.response(404, 'User not found')
+    @api.response(403, 'Forbidden')
+    @api.response(400, 'Invalid input data')
     def put(self, user_id):
         """Update user details by ID"""
         user_data = api.payload
+        current_user_id = get_jwt_identity()['id']
         
+        # Authorization verification
+        if user_id != current_user_id:
+            return {'error': 'You are not authorized to update this user'}, 403
+        # Data validation
+        if 'email' in user_data or 'password' in user_data:
+            return {'error': 'Email and password cannot be updated here'}, 400
+
         """Check if the user exists"""
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
-
-        # Check if the email is already registered by another user
-        existing_user = facade.get_user_by_email(user_data['email'])
-        if existing_user and existing_user.id != user.id:
-            return {'error': 'Email already registered by another user'}, 400
-        
+       
         updated_user = facade.update_user(user_id, user_data)
         return {'id': updated_user.id,
                 'first_name': updated_user.first_name,
