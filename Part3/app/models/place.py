@@ -66,15 +66,17 @@ class Place(BaseModel, db.Model):
         if longitude < -180.0 or longitude > 180.0:
             raise ValueError("Longitude must be between -180.0 and 180.0")
 
+        # Validation owner_id
+        if not owner_id or not isinstance(owner_id, str) or len(owner_id) != 36: 
+            raise ValueError("Invalid owner_id")
+
+
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
         self.owner_id = owner_id
-
-        # Add this place to the owner's places
-        owner_id.add_place(self)
 
     def add_review(self, review):
         """Add a review to the place."""
