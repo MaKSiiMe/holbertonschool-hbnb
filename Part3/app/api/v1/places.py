@@ -57,7 +57,6 @@ class PlaceList(Resource):
 
 @api.route('/<string:place_id>')
 class PlaceResource(Resource):
-    @jwt_required()
     @api.response(200, 'Success')
     @api.response(404, 'Place not found')
     def get(self, place_id):
@@ -87,7 +86,7 @@ class PlaceResource(Resource):
             if place.owner_id != current_user_id:
                 return {'message': 'You are not authorized to update this place'}, 403
 
-            updated_place = facade.update_place(place_id, api.payload)
+            facade.update_place(place_id, place_data)
             return {'message': 'Place updated successfully'}, 200
         except ValueError as e:
             if 'not found' in str(e):
