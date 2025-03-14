@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, redirect
 from flask_restx import Api
-from app.extensions import db, bcrypt, jwt, JWTManager
+from app.extensions import db, bcrypt, jwt, JWTManager, init_app
 from flask_migrate import Migrate
 from config import config
 
@@ -21,6 +21,7 @@ def create_app(config_class="development"):
     # Initialize centralized extensions
     db.init_app(app)
     bcrypt.init_app(app)
+    init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
 
