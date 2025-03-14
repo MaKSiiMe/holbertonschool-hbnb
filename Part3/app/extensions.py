@@ -6,3 +6,6 @@ from flask_jwt_extended import JWTManager
 db = SQLAlchemy()  # Pour la base de données
 bcrypt = Bcrypt() # Pour le hachage des mots de passe
 jwt = JWTManager()
+
+def init_app(app):
+    jwt.init_app(app)
