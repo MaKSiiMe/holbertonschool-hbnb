@@ -1,10 +1,15 @@
 # app/models/amenity.py
 
 from app.models.BaseModel import BaseModel
+from app import db
 
 
 class Amenity(BaseModel):
     """Class representing an Amenity in the HBnB application."""
+
+    __tablename__ = 'amenities'
+
+    name = db.Column(db.String(50), nullable=False)
 
     def __init__(self, name):
         """

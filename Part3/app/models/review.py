@@ -3,9 +3,16 @@
 from app.models.BaseModel import BaseModel
 from app.models.place import Place
 from app.models.user import User
+from app import db
+
 
 class Review(BaseModel):
     """Class representing a Review in the HBnB application."""
+
+    __tablename__ = 'reviews'
+
+    text = db.Column(db.String, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
 
     def __init__(self, text, rating, place, user):
         """

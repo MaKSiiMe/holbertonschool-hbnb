@@ -2,10 +2,19 @@
 
 from app.models.BaseModel import BaseModel
 from app.models.user import User
+from app import db
 
 
 class Place(BaseModel):
     """Class representing a Place in the HBnB application."""
+
+    __tablename__ = 'places'
+
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String, nullable=True)
+    price = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
 
     def __init__(self, title, description, price, latitude, longitude, owner):
         """
