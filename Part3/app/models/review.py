@@ -1,9 +1,9 @@
 # app/models/review.py
 
-from app import db
 from app.models.BaseModel import BaseModel
 from app.models.place import Place
 from app.models.user import User
+from app import db
 
 
 class Review(BaseModel):

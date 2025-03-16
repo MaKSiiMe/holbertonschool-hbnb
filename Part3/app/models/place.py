@@ -1,8 +1,8 @@
 # app/models/place.py
 
-from app import db
 from app.models.BaseModel import BaseModel
 from app.models.user import User
+from app import db
 
 
 class Place(BaseModel):

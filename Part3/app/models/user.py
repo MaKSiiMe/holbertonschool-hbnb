@@ -1,9 +1,12 @@
 # app/models/user.py
 
-from app import db, bcrypt
-import uuid
 import re
 from app.models.BaseModel import BaseModel
+from flask_bcrypt import Bcrypt
+from app import db, bcrypt
+import uuid
+
+bcrypt = Bcrypt()
 
 class User(BaseModel):
     """Class representing a User in the HBnB application."""
@@ -64,6 +67,10 @@ class User(BaseModel):
         if not re.match(email_pattern, email):
             raise ValueError("email is not a valid email")
 
+        # Validate password
+        if not password or not isinstance(password, str):
+            raise ValueError("Password is required and must be a string")
+
         # Validate is_admin
         if not isinstance(is_admin, bool):
             raise ValueError("is_admin must be a boolean value")
@@ -85,3 +92,17 @@ class User(BaseModel):
             str: Full name (first_name + last_name)
         """
         return f"{self.first_name} {self.last_name}"
+
+    def to_dict(self):
+        """
+        Convert the User instance to a dictionary excluding sensitive fields.
+        Returns:
+            dict: Dictionary representation of the user.
+        """
+        return {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'is_admin': self.is_admin
+        }
