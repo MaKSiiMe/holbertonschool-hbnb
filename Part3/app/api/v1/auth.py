@@ -1,4 +1,4 @@
-#app/api/v1/auth.py
+# app/api/v1/auth.py
 
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import create_access_token
@@ -10,6 +10,7 @@ auth_model = api.model('Auth', {
     'email': fields.String(required=True, description='User email'),
     'password': fields.String(required=True, description='User password')
 })
+
 
 @api.route('/login')
 class AuthLogin(Resource):

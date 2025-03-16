@@ -1,4 +1,4 @@
-#app/api/v1/places.py
+# app/api/v1/places.py
 
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
@@ -11,9 +11,12 @@ place_model = api.model('Place', {
     'description': fields.String(description='Detailed description'),
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Geographic latitude'),
-    'longitude': fields.Float(required=True, description='Geographic longitude'),
-    'amenities': fields.List(fields.String, required=True, description='List of amenity IDs')
+    'longitude': fields.Float(required=True,
+                              description='Geographic longitude'),
+    'amenities': fields.List(fields.String, required=True,
+                             description='List of amenity IDs')
 })
+
 
 @api.route('/')
 class PlaceList(Resource):
@@ -37,6 +40,7 @@ class PlaceList(Resource):
         """Get all Places (summary)."""
         places = facade.get_all_places()
         return [place.to_summary_dict() for place in places], 200
+
 
 @api.route('/<string:place_id>')
 class PlaceResource(Resource):
@@ -66,7 +70,8 @@ class PlaceResource(Resource):
                 return {'message': 'Place not found'}, 404
             if not is_admin and place.owner_id != user_id:
                 return {'error': 'Unauthorized action'}, 403
-            updated_place = facade.update_place(place_id, api.payload, user_id=user_id)
+            updated_place = facade.update_place(place_id, api.payload,
+                                                user_id=user_id)
             return {'message': 'Place updated successfully'}, 200
         except ValueError as e:
             return {'message': str(e)}, 400

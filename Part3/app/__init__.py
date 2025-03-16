@@ -1,4 +1,4 @@
-# app/__init__.py
+# app/__init__.py 
 
 import os
 from flask import Flask, Blueprint, redirect
@@ -18,6 +18,7 @@ from app.api.v1.admin import api as admin_ns  # Import the admin namespace
 jwt = JWTManager()
 migrate = Migrate()
 
+
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     # Use the correct config class (string reference)
@@ -36,7 +37,8 @@ def create_app(config_class="config.DevelopmentConfig"):
 
     # API Blueprint
     api_blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
-    api = Api(api_blueprint, title='HBnB API', version='1.0', description='HBnB Application API', doc='/')
+    api = Api(api_blueprint, title='HBnB API', version='1.0',
+              description='HBnB Application API', doc='/')
 
     # Add namespaces to the API
     api.add_namespace(auth_ns, path='/auth')

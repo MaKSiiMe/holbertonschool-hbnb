@@ -1,4 +1,4 @@
-#app/api/v1/users.py
+# app/api/v1/users.py
 
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
@@ -7,11 +7,15 @@ from app.services import facade
 api = Namespace('users', description='User operations')
 
 user_model = api.model('User', {
-    'first_name': fields.String(required=True, description='First name of the user'),
-    'last_name': fields.String(required=True, description='Last name of the user'),
+    'first_name': fields.String(required=True,
+                                description='First name of the user'),
+    'last_name': fields.String(required=True,
+                               description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user'),
-    'password': fields.String(required=True, description='Password of the user')
+    'password': fields.String(required=True,
+                              description='Password of the user')
 })
+
 
 @api.route('/')
 class UserList(Resource):
@@ -45,6 +49,7 @@ class UserList(Resource):
         users = facade.get_all_users()
         return [user.to_dict() for user in users], 200
 
+
 @api.route('/<user_id>')
 class UserResource(Resource):
     @jwt_required()
@@ -75,6 +80,8 @@ class UserResource(Resource):
         if 'email' in user_data:
             existing_user = facade.get_user_by_email(user_data['email'])
             if existing_user and existing_user.id != user.id:
-                return {'error': 'Email already registered by another user'}, 400
+                return {
+                    'error': 'Email already registered by another user'
+                }, 400
         updated_user = facade.update_user(user_id, user_data)
         return updated_user.to_dict(), 200

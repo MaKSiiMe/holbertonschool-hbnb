@@ -1,4 +1,4 @@
-#app/api/v1/reviews.py
+# app/api/v1/reviews.py
 
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
@@ -8,14 +8,17 @@ api = Namespace('reviews', description='Review operations')
 
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
+    'rating': fields.Integer(required=True,
+                             description='Rating of the place (1-5)'),
     'place_id': fields.String(required=True, description='ID of the place')
 })
+
 
 def validate_rating(rating):
     """Validate that the rating is between 1 and 5."""
     if not (1 <= rating <= 5):
         raise ValueError("Rating must be between 1 and 5")
+
 
 @api.route('/')
 class ReviewList(Resource):
@@ -55,6 +58,7 @@ class ReviewList(Resource):
         except Exception as e:
             return {"error": "An unexpected error occurred."}, 500
 
+
 @api.route('/<review_id>')
 class ReviewResource(Resource):
     @jwt_required()
@@ -86,7 +90,8 @@ class ReviewResource(Resource):
             if not is_admin and review.user_id != user_id:
                 return {"error": "Unauthorized action"}, 403
             validate_rating(review_update['rating'])
-            updated_review = facade.update_review(review_id, review_update, user_id=user_id)
+            updated_review = facade.update_review(review_id, review_update,
+                                                  user_id=user_id)
             return {
                 "message": "Review updated successfully",
                 "data": updated_review.to_dict()

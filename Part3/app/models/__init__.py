@@ -1,4 +1,5 @@
-#app/models/__init__.py
+# app/models/__init__.py
+
 from .user import User
 from .place import Place
 from .review import Review

@@ -11,10 +11,10 @@ from app.models.amenity import Amenity
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repository  = UserRepository()
-        self.place_repository  = PlaceRepository()
-        self.review_repository  = ReviewRepository()
-        self.amenity_repository  = AmenityRepository()
+        self.user_repository = UserRepository()
+        self.place_repository = PlaceRepository()
+        self.review_repository = ReviewRepository()
+        self.amenity_repository = AmenityRepository()
 
     """
     User
@@ -35,11 +35,13 @@ class HBnBFacade:
     def update_user(self, user_id, user_data):
         self.user_repository .update(user_id, user_data)
         return self.user_repository .get(user_id)
-    
+
     def get_all_users(self):
         users = [
-            {'id': 1, 'first_name': 'Jane', 'last_name': 'Doe', 'email':'jane.doe@example.com'},
-            {'id': 2, 'first_name': 'John', 'last_name': 'Smith', 'email': 'john.smith@example.com'}
+            {'id': 1, 'first_name': 'Jane', 'last_name': 'Doe',
+             'email': 'jane.doe@example.com'},
+            {'id': 2, 'first_name': 'John', 'last_name': 'Smith',
+             'email': 'john.smith@example.com'}
         ]
         return users
 

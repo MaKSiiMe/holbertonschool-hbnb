@@ -1,4 +1,4 @@
-#app/api/v1/admin.py
+# app/api/v1/admin.py
 
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -23,21 +23,26 @@ place_model = api.model('Place', {
     'description': fields.String(description='Detailed description'),
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Geographic latitude'),
-    'longitude': fields.Float(required=True, description='Geographic longitude'),
+    'longitude': fields.Float(required=True,
+                              description='Geographic longitude'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description='List of amenity IDs')
+    'amenities': fields.List(fields.String, required=True,
+                             description='List of amenity IDs')
 })
 
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
+    'rating': fields.Integer(required=True,
+                             description='Rating of the place (1-5)'),
     'user_id': fields.String(required=True, description='ID of the user'),
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
+
 def is_admin(user_id):
     user = facade.get_user_by_id(user_id)
     return user.is_admin if user else False
+
 
 @api.route('/users')
 class AdminUserList(Resource):
@@ -50,7 +55,7 @@ class AdminUserList(Resource):
         if not is_admin(current_user):
             return {'error': 'Unauthorized action'}, 403
         users = facade.get_all_users()
-        return [{'id': user.id, 
+        return [{'id': user.id,
                  'first_name': user.first_name,
                  'last_name': user.last_name,
                  'email': user.email,
@@ -82,6 +87,7 @@ class AdminUserList(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
+
 @api.route('/users/<user_id>')
 class AdminUserResource(Resource):
     @jwt_required()
@@ -110,6 +116,7 @@ class AdminUserResource(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
+
 @api.route('/amenities')
 class AdminAmenityList(Resource):
     @jwt_required()
@@ -135,6 +142,7 @@ class AdminAmenityList(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
+
 @api.route('/places/<place_id>')
 class AdminPlaceResource(Resource):
     @jwt_required()
@@ -148,8 +156,8 @@ class AdminPlaceResource(Resource):
         if not is_admin(current_user):
             return {'error': 'Unauthorized action'}, 403
         place_data = api.payload
-        try:
-            updated_place = facade.update_place(place_id, place_data)  # No user_id passed
+        try:  # No owner_id passed
+            updated_place = facade.update_place(place_id, place_data)
             return {
                 'message': 'Place updated successfully',
                 'data': {
@@ -165,6 +173,7 @@ class AdminPlaceResource(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
+
 @api.route('/reviews/<review_id>')
 class AdminReviewResource(Resource):
     @jwt_required()
@@ -178,8 +187,8 @@ class AdminReviewResource(Resource):
         if not is_admin(current_user):
             return {'error': 'Unauthorized action'}, 403
         review_data = api.payload
-        try:
-            updated_review = facade.update_review(review_id, review_data)  # No user_id passed
+        try:  # No user_id or place_id passed
+            updated_review = facade.update_review(review_id, review_data)
             return {
                 'message': 'Review updated successfully',
                 'data': {

@@ -10,6 +10,7 @@ amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
 })
 
+
 @api.route('/')
 class AmenityList(Resource):
     @jwt_required()
@@ -31,6 +32,7 @@ class AmenityList(Resource):
         """Retrieve a list of all amenities"""
         amenities = facade.get_all_amenities()
         return [{'id': a.id, 'name': a.name} for a in amenities], 200
+
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
