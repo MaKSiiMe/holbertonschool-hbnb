@@ -1,5 +1,15 @@
+<<<<<<< HEAD
 flask
 flask-restx
 sqlalchemy
 flask-sqlalchemy
 flask-bcrypt
+=======
+#Part3 /requirements.txt
+flask
+flask-restx
+flask-bcrypt
+flask-jwt-extended
+sqlalchemy
+flask-sqlalchemy
+>>>>>>> main

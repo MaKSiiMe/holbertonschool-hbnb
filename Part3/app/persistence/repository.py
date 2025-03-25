@@ -1,7 +1,13 @@
 from abc import ABC, abstractmethod
 from app import db
+<<<<<<< HEAD
 from app.extensions import db  # Assuming you have set up SQLAlchemy in your Flask app
 from app.models import User, Place, Review, Amenity  # Import your models
+=======
+from app.extensions import db
+from app.models import User, Place, Review, Amenity
+
+>>>>>>> main
 
 class Repository(ABC):
     @abstractmethod
@@ -53,8 +59,17 @@ class InMemoryRepository(Repository):
             del self._storage[obj_id]
 
     def get_by_attribute(self, attr_name, attr_value):
+<<<<<<< HEAD
         return next((obj for obj in self._storage.values() if getattr(obj, attr_name) == attr_value), None)
     
+=======
+        return next(
+            (obj for obj in self._storage.values()
+             if getattr(obj, attr_name) == attr_value),
+            None
+        )
+
+>>>>>>> main
     def find_by_email(self, email):
         return self.get_by_attribute('email', email)
 
@@ -100,14 +115,26 @@ class UserRepository(SQLAlchemyRepository):
     def get_user_by_email(self, email):
         return self.model.query.filter_by(email=email).first()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 class PlaceRepository(SQLAlchemyRepository):
     def __init__(self):
         super().__init__(Place)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 class ReviewRepository(SQLAlchemyRepository):
     def __init__(self):
         super().__init__(Review)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 class AmenityRepository(SQLAlchemyRepository):
     def __init__(self):
         super().__init__(Amenity)

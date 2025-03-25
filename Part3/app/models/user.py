@@ -8,6 +8,10 @@ import uuid
 
 bcrypt = Bcrypt()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 class User(BaseModel):
     """Class representing a User in the HBnB application."""
 
@@ -20,14 +24,21 @@ class User(BaseModel):
         Args:
             first_name (str): First name of the user (required, max 50 chars)
             last_name (str): Last name of the user (required, max 50 chars)
+<<<<<<< HEAD
             email (str): Email address of the user (required, must be valid format)
+=======
+            email (str): Email address of the user (required, must be valid)
+>>>>>>> main
             is_admin (bool, optional): Admin status. Defaults to False.
 
         Raises:
             ValueError: If any validation fails
         """
 
+<<<<<<< HEAD
         
+=======
+>>>>>>> main
         first_name = db.Column(db.String(50), nullable=False)
         last_name = db.Column(db.String(50), nullable=False)
         email = db.Column(db.String(120), nullable=False, unique=True)
@@ -44,7 +55,10 @@ class User(BaseModel):
         """Verify the hashed password."""
         return bcrypt.check_password_hash(self.password, password)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         super().__init__()
 
         # Validate first_name
