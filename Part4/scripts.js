@@ -1,24 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const places = [
-        { name: 'Cozy Apartment', price: 120 },
-        { name: 'Beach House', price: 200 },
-        { name: 'Mountain Cabin', price: 150 }
-    ];
-
     const placesList = document.getElementById('places-list');
 
-    places.forEach(place => {
-        const card = document.createElement('div');
-        card.className = 'place-card';
+    // Fonction pour récupérer les lieux depuis l'API
+    async function fetchPlaces() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/v1/places/');
+            if (!response.ok) {
+                throw new Error('Failed to fetch places');
+            }
+            const places = await response.json();
 
-        card.innerHTML = `
-            <h3 class="place-name">${place.name}</h3>
-            <p class="place-price">$${place.price} per night</p>
-            <button class="details-button">View Details</button>
-        `;
+            // Afficher les lieux dans le frontend
+            places.forEach(place => {
+                const card = document.createElement('div');
+                card.className = 'place-card';
+                card.innerHTML = `
+                    <h3 class="place-name">${place.title}</h3>
+                    <p class="place-price">$${place.price} per night</p>
+                    <button class="details-button" data-id="${place.id}">View Details</button>
+                `;
+                placesList.appendChild(card);
+            });
+        } catch (error) {
+            console.error('Error fetching places:', error);
+        }
+    }
 
-        placesList.appendChild(card);
-    });
+    // Appeler la fonction pour récupérer les lieux
+    fetchPlaces();
 
     const isLoggedIn = false; // Changez cette valeur pour tester
 
@@ -49,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Envoi de la requête POST à l'API de connexion
-                const response = await fetch('https://your-api-url.com/api/v1/login', {
+                const response = await fetch('http://127.0.0.1:5000/api/v1/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -60,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     const data = await response.json();
                     // Stocker le token JWT dans un cookie
-                    document.cookie = `token=${data.token}; path=/; secure`;
+                    document.cookie = `token=${data.access_token}; path=/; secure`;
 
                     // Rediriger vers index.html
                     window.location.href = 'index.html';
@@ -86,6 +95,30 @@ document.addEventListener('DOMContentLoaded', () => {
             loginForm.appendChild(newErrorMessage);
         } else {
             errorMessage.textContent = message;
+        }
+    }
+
+    async function submitReview(placeId, reviewText, rating) {
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/api/v1/reviews/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    place_id: placeId,
+                    text: reviewText,
+                    rating: rating,
+                }),
+            });
+
+            if (response.ok) {
+                console.log('Review submitted successfully');
+            } else {
+                console.error('Failed to submit review');
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
         }
     }
 });

@@ -5,15 +5,16 @@ from flask import Flask, Blueprint, redirect
 from flask_restx import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from app.extensions import db, bcrypt  # Absolute import for extensions
+from .extensions import db, bcrypt  # Absolute import for extensions
 from config import config  # Ensure this is correct!
 # API Namespaces
-from app.api.v1.users import api as users_ns
-from app.api.v1.auth import api as auth_ns
-from app.api.v1.places import api as places_ns
-from app.api.v1.amenities import api as amenities_ns
-from app.api.v1.reviews import api as reviews_ns
-from app.api.v1.admin import api as admin_ns  # Import the admin namespace
+from .api.v1.users import api as users_ns
+from .api.v1.auth import api as auth_ns
+from .api.v1.places import api as places_ns
+from .api.v1.amenities import api as amenities_ns
+from .api.v1.reviews import api as reviews_ns
+from .api.v1.admin import api as admin_ns  # Import the admin namespace
+from flask_cors import CORS
 
 jwt = JWTManager()
 migrate = Migrate()
@@ -29,6 +30,7 @@ def create_app(config_class="config.DevelopmentConfig"):
     bcrypt.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
+    CORS(app)
 
     # Define the root route
     @app.route('/')

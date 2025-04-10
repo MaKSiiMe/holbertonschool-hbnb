@@ -6,3 +6,4 @@ flask-jwt-extended
 sqlalchemy
 flask-sqlalchemy
 flask_migrate
+flask-cors
