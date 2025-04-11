@@ -1,71 +1,79 @@
-# <img src="https://cdn.prod.website-files.com/6105315644a26f77912a1ada/63eea844ae4e3022154e2878_Holberton-p-800.png" width="150" /> - HBNB Project - Cohort C#25  
-The HBnB project at Holberton is a simplified full-stack clone of Airbnb. It covers various aspects of software development, including backend, database management, front-end integration, and deployment.
+# HbnB Project - Adrien Vieilledent
 
----
-# HBnB Project - Part 3: Enhanced Backend with Authentication and Database Integration
+## Installation :
+You will git clone the repository to get and test my API / front end project  part4 of the HbnB.
 
-Welcome to Part 3 of the HBnB project! In this section, you will enhance the backend of the application by integrating user authentication, implementing role-based authorization, and transitioning from in-memory storage to a relational database using SQLAlchemy and SQLite for development. Later, you'll configure MySQL for production environments. This part will set the foundation for a secure, scalable, and production-ready backend system.
+- You need to create an executable file **install.sh** :
+```bash
+touch install.sh &&
+chmod u+x install.sh
+```
 
-## Objectives
+- Then copy inside the **install.sh** this code:
 
-### 1. **Authentication and Authorization:**
-   - Implement JWT-based user authentication using **Flask-JWT-Extended**.
-   - Implement role-based access control (RBAC) using the `is_admin` attribute for specific endpoints.
+<details>
 
-### 2. **Database Integration:**
-   - Replace in-memory storage with **SQLite** for development using **SQLAlchemy** as the ORM.
-   - Prepare the system for **MySQL** or other production-grade RDBMS.
+```bash
+#!/bin/bash
 
-### 3. **CRUD Operations with Database Persistence:**
-   - Refactor all CRUD operations to interact with the new persistent database (SQLite during development, MySQL for production).
+# Function to clone the 'part4' folder from the GitHub repository
+clone_part4() {
+echo "Cloning the 'part4' repository..."
+git clone https://github.com/vlldnt/holbertonschool-hbnb.git
 
-### 4. **Database Design and Visualization:**
-   - Design and visualize the database schema using **mermaid.js**.
-   - Ensure correct relationships between entities like Users, Places, Reviews, and Amenities.
+# Navigate into the 'part4' folder
+cd holbertonschool-hbnb/part4
+echo "The 'part4' folder has been cloned and you are now in that folder."
 
-### 5. **Data Consistency and Validation:**
-   - Enforce data validation and constraints within the database models to ensure consistency.
+}
 
----
+# Function to create a virtual environment and install dependencies
+setup_venv_and_install_requirements() {
+echo "Creating the virtual environment..."
 
-## Structure of the Project
+# Create a virtual environment (venv)
+python3 -m venv venv
 
-The tasks in this part of the project are organized progressively to help you build a complete, secure, and database-backed backend system:
+# Activate the virtual environment
+source venv/bin/activate
+echo "Installing dependencies from 'requirements.txt'..."
 
-1. **Modify the User Model to Include Password:**
-   - Modify the User model to securely store passwords using **bcrypt2** and update the user registration process.
+# Check if the requirements.txt file exists
+if [[ -f "requirements.txt" ]]; then
+pip install -r requirements.txt
+echo "Dependencies installed successfully."
+else
+echo "'requirements.txt' file not found."
+exit 1
+fi
+}
 
-2. **Implement JWT Authentication:**
-   - Secure the API by implementing JWT tokens. Only authenticated users should be able to access protected endpoints.
+# Function to run the API
+run_api() {
+echo "Starting the API..."
 
-3. **Implement Authorization for Specific Endpoints:**
-   - Implement role-based access control (RBAC) to restrict certain actions to administrators.
+# Run the Python file to start the API
+python3 run.py
+}
 
-4. **SQLite Database Integration:**
-   - Transition from in-memory storage to **SQLite** as the persistent database during development.
+# Run the functions
+clone_part4
+setup_venv_and_install_requirements
+run_api
+```
+</details>
 
-5. **Map Entities Using SQLAlchemy:**
-   - Map existing entities (User, Place, Review, Amenity) to the database using **SQLAlchemy** and define relationships correctly.
+#### Step of the install.sh :
 
-6. **Prepare for MySQL in Production:**
-   - Towards the end of this phase, configure the application to use **MySQL** in production environments while using **SQLite** for development.
+1. Clone the GitHub repository from vlldnt.
+2. Navigate into the holbertonschool-hbnb/part4 folder.
+3. Display a message confirming that the part4 folder has been cloned and the current directory is inside it.
+4. Create a Python virtual environment using venv.
+5. Activate the virtual environment.
+6. Install the dependencies needed using `pip install -r requirements.txt`
+7. Start the Python script `run.py` to launch the API.
 
-7. **Database Design and Visualization:**
-   - Use **mermaid.js** to create entity-relationship diagrams (ERDs) for the database schema and ensure all relationships are properly visualized.
 
----
+## Usage 
 
-## Final Deliverables
-
-- A backend system with JWT-based authentication and role-based access control.
-- A database-backed system with persistent storage using SQLite and preparation for MySQL deployment.
-- A well-designed and visualized relational database schema.
-- A secure, scalable, and production-ready backend ready for further enhancements.
-
----
-
-### 👤 Contributors:  
-- [David Tolza](https://github.com/VidadTol)  
-- [Giovanni Farias](https://github.com/ginftls)  
-- [Ludiane Trouillefou](https://github.com/ludiane-tr)  
-- [Maxime Truel](https://github.com/MaKSiiMe)
+Now you can "Go Live" the `index.html` in your VS Code and 

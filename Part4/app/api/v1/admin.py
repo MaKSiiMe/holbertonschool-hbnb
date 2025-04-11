@@ -1,203 +1,162 @@
-# app/api/v1/admin.py
-
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services import facade
+from flask import request
 
-api = Namespace('admin', description='Admin-only operations')
+api = Namespace('admin', description='Admin operations')
 
-user_model = api.model('AdminUser', {
-    'first_name': fields.String(description='User first name'),
-    'last_name': fields.String(description='User last name'),
-    'email': fields.String(description='User email (must be unique)'),
-    'password': fields.String(description='User password (min 8 chars)'),
-    'is_admin': fields.Boolean(description='Is the user an admin?')
-})
+user_model = api.model(
+    'User', {
+        'first_name': fields.String(
+            required=True, description='First name of the user'),
+        'last_name': fields.String(
+            required=True, description='Last name of the user'),
+        'password': fields.String(
+            required=True, description='User\'s password'),
+        'email': fields.String(
+            required=True, description='Email of the user'),
+        'is_admin': fields.Boolean(
+            required=True, description='Admin flag')
+    }
+)
 
 amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
 })
 
 place_model = api.model('Place', {
-    'title': fields.String(required=True, description='Place title'),
-    'description': fields.String(description='Detailed description'),
+    'title': fields.String(required=True, description='Title of the place'),
+    'description': fields.String(description='Description of the place'),
     'price': fields.Float(required=True, description='Price per night'),
-    'latitude': fields.Float(required=True, description='Geographic latitude'),
+    'latitude': fields.Float(required=True,
+                             description='Latitude of the place'),
     'longitude': fields.Float(required=True,
-                              description='Geographic longitude'),
-    'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True,
-                             description='List of amenity IDs')
-})
-
-review_model = api.model('Review', {
-    'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True,
-                             description='Rating of the place (1-5)'),
-    'user_id': fields.String(required=True, description='ID of the user'),
-    'place_id': fields.String(required=True, description='ID of the place')
+                              description='Longitude of the place'),
+    'owner_id': fields.String(required=True, description='ID of the owner')
 })
 
 
-def is_admin(user_id):
-    user = facade.get_user_by_id(user_id)
-    return user.is_admin if user else False
-
-
-@api.route('/users')
-class AdminUserList(Resource):
-    @jwt_required()
-    @api.response(200, 'Users retrieved successfully')
-    @api.response(403, 'Unauthorized action')
-    def get(self):
-        """Retrieve all users (admin-only)."""
-        current_user = get_jwt_identity()
-        if not is_admin(current_user):
-            return {'error': 'Unauthorized action'}, 403
-        users = facade.get_all_users()
-        return [{'id': user.id,
-                 'first_name': user.first_name,
-                 'last_name': user.last_name,
-                 'email': user.email,
-                 'is_admin': user.is_admin} for user in users], 200
-
-    @jwt_required()
+@api.route('/users/')
+class AdminUserCreate(Resource):
     @api.expect(user_model, validate=True)
-    @api.response(201, 'User created successfully')
-    @api.response(403, 'Unauthorized action')
+    @api.response(201, 'User successfully created')
+    @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
+    @api.doc(security='token')
+    @jwt_required()
     def post(self):
-        """Create a new user (admin-only)."""
-        current_user = get_jwt_identity()
-        if not is_admin(current_user):
-            return {'error': 'Unauthorized action'}, 403
         user_data = api.payload
+        current_user = get_jwt_identity()
+        if not current_user.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
+
+        user_data = request.json
+        email = user_data.get('email')
+
+        # Check if email is already in use
+        if facade.get_user_by_email(email):
+            return {'error': 'Email already registered'}, 400
+
         try:
+            existing_user = facade.get_user_by_email(user_data['email'])
+            if existing_user:
+                return {'error': 'Email already registered'}, 400
+
             new_user = facade.create_user(user_data)
             return {
-                'message': 'User created successfully',
-                'data': {
-                    'id': new_user.id,
-                    'first_name': new_user.first_name,
-                    'last_name': new_user.last_name,
-                    'email': new_user.email,
-                    'is_admin': new_user.is_admin
-                }
+                'id': new_user.id,
+                'message': 'User successfully created'
             }, 201
         except ValueError as e:
+            return {'error': str(e)}, 400
+        except TypeError as e:
             return {'error': str(e)}, 400
 
 
 @api.route('/users/<user_id>')
-class AdminUserResource(Resource):
-    @jwt_required()
+class AdminUserModify(Resource):
     @api.expect(user_model, validate=True)
-    @api.response(200, 'User updated successfully')
-    @api.response(403, 'Unauthorized action')
+    @api.response(200, 'User successfully updated')
+    @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
+    @api.doc(security='token')
+    @jwt_required()
     def put(self, user_id):
-        """Modify any user's details (admin-only)."""
-        current_user = get_jwt_identity()
-        if not is_admin(current_user):
-            return {'error': 'Unauthorized action'}, 403
         user_data = api.payload
+        current_user = get_jwt_identity()
+        if not current_user.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
+
+        data = request.json
+        email = data.get('email')
+
+        if email:
+            existing_user = facade.get_user_by_email(email)
+            if existing_user and existing_user.id != user_id:
+                return {'error': 'Email already in use'}, 400
+
         try:
             updated_user = facade.update_user(user_id, user_data)
             return {
-                'message': 'User updated successfully',
-                'data': {
-                    'id': updated_user.id,
-                    'first_name': updated_user.first_name,
-                    'last_name': updated_user.last_name,
-                    'email': updated_user.email,
-                    'is_admin': updated_user.is_admin
-                }
+                'id': updated_user.id,
+                'message': 'User successfully updated',
             }, 200
         except ValueError as e:
+            return {'error': str(e)}, 404
+        except TypeError as e:
             return {'error': str(e)}, 400
 
 
-@api.route('/amenities')
-class AdminAmenityList(Resource):
-    @jwt_required()
-    @api.expect(amenity_model, validate=True)
-    @api.response(201, 'Amenity created successfully')
-    @api.response(403, 'Unauthorized action')
+@api.route('/amenities/')
+class AdminAmenityCreate(Resource):
+    @api.expect(amenity_model)
+    @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
+    @api.doc(security='token')
+    @jwt_required()
     def post(self):
-        """Create a new amenity (admin-only)."""
         current_user = get_jwt_identity()
-        if not is_admin(current_user):
-            return {'error': 'Unauthorized action'}, 403
         amenity_data = api.payload
+        if not current_user.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
+
         try:
+            existing_amenity = facade.get_amenity_by_name(
+                amenity_data['name'])
+            if existing_amenity:
+                return {'error': 'Amenity already registered'}, 400
             new_amenity = facade.create_amenity(amenity_data)
             return {
-                'message': 'Amenity created successfully',
-                'data': {
-                    'id': new_amenity.id,
-                    'name': new_amenity.name
-                }
+                'id': new_amenity.id,
+                'message': 'Amenity successfully created'
             }, 201
         except ValueError as e:
             return {'error': str(e)}, 400
-
-
-@api.route('/places/<place_id>')
-class AdminPlaceResource(Resource):
-    @jwt_required()
-    @api.expect(place_model, validate=True)
-    @api.response(200, 'Place updated successfully')
-    @api.response(403, 'Unauthorized action')
-    @api.response(400, 'Invalid input data')
-    def put(self, place_id):
-        """Update a place (admin-only, bypasses ownership)."""
-        current_user = get_jwt_identity()
-        if not is_admin(current_user):
-            return {'error': 'Unauthorized action'}, 403
-        place_data = api.payload
-        try:  # No owner_id passed
-            updated_place = facade.update_place(place_id, place_data)
-            return {
-                'message': 'Place updated successfully',
-                'data': {
-                    'id': updated_place.id,
-                    'title': updated_place.title,
-                    'description': updated_place.description,
-                    'price': updated_place.price,
-                    'latitude': updated_place.latitude,
-                    'longitude': updated_place.longitude,
-                    'owner_id': updated_place.owner_id
-                }
-            }, 200
-        except ValueError as e:
+        except TypeError as e:
             return {'error': str(e)}, 400
 
 
-@api.route('/reviews/<review_id>')
-class AdminReviewResource(Resource):
-    @jwt_required()
-    @api.expect(review_model, validate=True)
-    @api.response(200, 'Review updated successfully')
-    @api.response(403, 'Unauthorized action')
+@api.route('/amenities/<amenity_id>')
+class AdminAmenityModify(Resource):
+    @api.expect(amenity_model)
+    @api.response(200, 'Amenity updated successfully')
+    @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
-    def put(self, review_id):
-        """Update a review (admin-only, bypasses ownership)."""
+    @api.doc(security='token')
+    @jwt_required()
+    def put(self, amenity_id):
+        amenity_data = api.payload
         current_user = get_jwt_identity()
-        if not is_admin(current_user):
-            return {'error': 'Unauthorized action'}, 403
-        review_data = api.payload
-        try:  # No user_id or place_id passed
-            updated_review = facade.update_review(review_id, review_data)
+        if not current_user.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
+
+        try:
+            updated_amenity = facade.update_amenity(amenity_id, amenity_data)
             return {
-                'message': 'Review updated successfully',
-                'data': {
-                    'id': updated_review.id,
-                    'text': updated_review.text,
-                    'rating': updated_review.rating,
-                    'user_id': updated_review.user_id,
-                    'place_id': updated_review.place_id
-                }
-            }, 200
+                'id': updated_amenity.id,
+                'message': 'Amenity successfully updated'
+            }, 201
         except ValueError as e:
+            return {'error': str(e)}, 400
+        except TypeError as e:
             return {'error': str(e)}, 400

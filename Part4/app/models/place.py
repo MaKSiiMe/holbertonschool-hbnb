@@ -1,105 +1,110 @@
-# app/models/place.py
+#!/usr/bin/python3
+'''Place Class'''
 
-from app.models.BaseModel import BaseModel
-from app.models.user import User
+from app.models.basemodel import BaseModel
+from app.models.amenity import Amenity
+from app.models.review import Review
+from app.models.place_amenity import place_amenity
 from app import db
+from sqlalchemy.orm import validates, relationship
 
 
 class Place(BaseModel):
-    """Class representing a Place in the HBnB application."""
-
+    """Place class that inherits from BaseModel."""
     __tablename__ = 'places'
 
     title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String, nullable=True)
-    price = db.Column(db.Float, nullable=False)
+    description = db.Column(db.String(1000), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'),
+                         nullable=False)
+    reviews = db.relationship('Review', backref='place', lazy=True)
+    amenities = db.relationship('Amenity', secondary=place_amenity,
+                                lazy='subquery',
+                                backref=db.backref('places', lazy=True))
 
-    def __init__(self, title, description, price, latitude, longitude, owner):
-        """
-        Initialize a new Place instance.
+    @validates('title')
+    def validate_title(self, key, value):
+        """Validation for title"""
+        if not value:
+            raise TypeError("Title must be present.")
+        if len(value) > 100:
+            raise ValueError(
+                "Title must be present with a maximum of 100 characters.")
+        return value
 
-        Args:
-            title (str): Title of the place (required, max 100 chars)
-            description (str, optional): Description of the place
-            price (float): Price per night (must be positive)
-            latitude (float): Latitude coordinate (-90 to 90)
-            longitude (float): Longitude coordinate (-180 to 180)
-            owner (User): User instance of the owner
+    @validates('description')
+    def validate_description(self, key, value):
+        """Validation for description"""
+        if len(value) > 1000:
+            raise ValueError(
+                "Description must be less than 1000 characters.")
+        return value
 
-        Raises:
-            ValueError: If any validation fails
-        """
-        super().__init__()
+    @validates('price')
+    def validate_price(self, key, value):
+        if not isinstance(value, int):
+            raise TypeError("Price must be an integer.")
+        if value <= 0 or not value:
+            raise ValueError("The price must be present and greater than 0.")
+        return value
 
-        # Validate title
-        if not title or not isinstance(title, str):
-            raise ValueError("Title is required and must be a string")
-        if len(title) > 100:
-            raise ValueError("Title cannot exceed 100 characters")
-
-        # Validate description (optional)
-        if description is not None and not isinstance(description, str):
-            raise ValueError("Description must be a string")
-
-        # Validate price
-        if not isinstance(price, (int, float)):
-            raise ValueError("Price must be a number")
-        if price <= 0:
-            raise ValueError("Price must be a positive value")
-
-        # Validate latitude
-        if not isinstance(latitude, (int, float)):
-            raise ValueError("Latitude must be a number")
-        if latitude < -90.0 or latitude > 90.0:
+    @validates('latitude')
+    def validate_latitude(self, key, value):
+        if not isinstance(value, float):
+            raise TypeError("Latitude must be a float.")
+        if value < -90 or value > 90:
             raise ValueError("Latitude must be between -90.0 and 90.0")
+        return value
 
-        # Validate longitude
-        if not isinstance(longitude, (int, float)):
-            raise ValueError("Longitude must be a number")
-        if longitude < -180.0 or longitude > 180.0:
+    @validates('longitude')
+    def validate_longitude(self, key, value):
+        if not isinstance(value, float):
+            raise TypeError("Longitude must be a float.")
+        if value < -180 or value > 180:
             raise ValueError("Longitude must be between -180.0 and 180.0")
+        return value
 
-        # Validate owner
-        if not isinstance(owner, User):
-            raise ValueError("Owner must be a User instance")
-
-        self.title = title
-        self.description = description
-        self.price = price
-        self.latitude = latitude
-        self.longitude = longitude
-        self.owner = owner
-        self.reviews = []  # List to store related reviews
-        self.amenities = []  # List to store related amenities
-
-        # Add this place to the owner's places
-        owner.add_place(self)
+    @validates('owner_id')
+    def validate_owner_id(self, key, value):
+        if not isinstance(value, str):
+            raise TypeError("Owner must be a User ID string.")
+        return value
 
     def add_review(self, review):
         """Add a review to the place."""
         self.reviews.append(review)
+        self.save()
+
+    def delete_review(self, review):
+        """Delete a review from the place."""
+        if review in self.reviews:
+            self.reviews.remove(review)
+            self.save()
 
     def add_amenity(self, amenity):
         """Add an amenity to the place."""
-        if amenity not in self.amenities:
-            self.amenities.append(amenity)
+        self.amenities.append(amenity)
+        self.save()
 
-    def remove_amenity(self, amenity):
-        """Remove an amenity from the place."""
+    def delete_amenity(self, amenity):
+        """Delete a review from the place."""
         if amenity in self.amenities:
-            self.amenities.remove(amenity)
+            self.reviews.remove(amenity)
+            self.save()
 
-    def get_average_rating(self):
-        """
-        Calculate the average rating for this place.
-
-        Returns:
-            float: Average rating or 0 if no reviews
-        """
-        if not self.reviews:
-            return 0
-
-        total_rating = sum(review.rating for review in self.reviews)
-        return total_rating / len(self.reviews)
+    def to_dict(self):
+        """Convert the Place object to a dictionary."""
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "price": self.price,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "owner_id": self.owner_id,
+            "amenities": [{'id': amenity.id, 'name': amenity.name}
+                          for amenity in self.amenities]
+        }

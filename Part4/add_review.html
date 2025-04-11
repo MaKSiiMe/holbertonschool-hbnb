@@ -3,23 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Review</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>List of Places</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+    <link rel="icon" href="assets/images/logos-icons/icon.png">
 </head>
 <body>
+    <div class="separator-header">
+        <span></span>
+    </div>
+    <header>
+        <div class="logo-login">
+
+            <a href="index.html"><img src="assets/images/logos-icons/logo.png" alt="index"></a>
+
+            <a href="login.html" id="login-link">
+                <button class="login-button">
+                  <span class="login-text">Login</span>
+                  <img src="assets/images/logos-icons/login.png" alt="login-logo" class="icon-login">
+                </button>
+              </a>
+            <a href="login.html" id="logout-link">
+                <button class="login-button">
+                  <span class="login-text">Logout</span>
+                  <img src="assets/images/logos-icons/logout.svg" alt="login-logo" class="icon-logout">
+                </button>
+            </a>
+        </div>
+    </header>
     <main>
+        <div class="separator-header">
+            <span></span>
+        </div>
         <!-- Add something to idfentify the place you're reviewing -->
         <form id="review-form">
             <h2>Add a Review</h2>
+
             <label for="review">Your Review:</label>
-            <textarea id="review" name="review" required></textarea>
+            <textarea id="review" name="review" placeholder="Write your review here" required></textarea>
+
             <label for="rating">Rating:</label>
             <select id="rating" name="rating" required>
-                <!-- Options for rating -->
+                <option value="">Select a rating</option>
+                <option value="1">1 ⭐</option>
+                <option value="2">2 ⭐⭐</option>
+                <option value="3">3 ⭐⭐⭐</option>
+                <option value="4">4 ⭐⭐⭐⭐</option>
+                <option value="5">5 ⭐⭐⭐⭐⭐</option>
             </select>
+            
             <button type="submit">Submit Review</button>
         </form>
     </main>
-    <script src="scripts.js"></script>
+    <script src="assets/js/scripts.js"></script>
 </body>
+<footer>
+    <p>&copy; HBNB Vieilledent Adrien - Holberton School - C#25 - All rights reserved</p>
+</footer>
 </html>

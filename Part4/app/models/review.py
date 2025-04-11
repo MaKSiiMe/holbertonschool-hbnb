@@ -1,76 +1,60 @@
-# app/models/review.py
+#!/usr/bin/python3
+'''Review Class'''
 
-from app.models.BaseModel import BaseModel
-from app.models.place import Place
-from app.models.user import User
+
+from .basemodel import BaseModel
 from app import db
+from sqlalchemy.orm import validates, relationship
 
 
 class Review(BaseModel):
-    """Class representing a Review in the HBnB application."""
-
     __tablename__ = 'reviews'
 
-    text = db.Column(db.String, nullable=False)
+    text = db.Column(db.String(500), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'),
+                        nullable=False)
+    place_id = db.Column(db.String(36), db.ForeignKey('places.id'),
+                         nullable=False)
 
-    def __init__(self, text, rating, place, user):
-        """
-        Initialize a new Review instance.
+    @validates('text')
+    def validate_text(self, key, value):
+        '''Validate the text attribute'''
+        if not value or len(value) > 500:
+            raise ValueError(
+                "Text review must be present and with 500 characters maximum."
+            )
+        return value
 
-        Args:
-            text (str): Content of the review (required)
-            rating (int): Rating given to the place (1-5)
-            place (Place): Place instance being reviewed
-            user (User): User instance of the reviewer
+    @validates('user_id')
+    def validate_user_id(self, key, value):
+        '''Validate the user_id attribute'''
+        if not value or not isinstance(value, str):
+            raise ValueError("User must be present and an instance of User.")
+        return value
 
-        Raises:
-            ValueError: If any validation fails
-        """
-        super().__init__()
+    @validates('place_id')
+    def validate_place_id(self, key, value):
+        '''Validate the place_id attribute'''
+        if not value or not isinstance(value, str):
+            raise ValueError("Place must be present and an instance of Place.")
+        return value
 
-        # Validate text
-        if not text or not isinstance(text, str):
-            raise ValueError("Review text is required and must be a string")
+    @validates('rating')
+    def validate_rating(self, key, value):
+        '''Validate the rating attribute'''
+        if not (1 <= value <= 5):
+            raise ValueError("Rating must be between 1 and 5.")
+        if not isinstance(value, int):
+            raise TypeError("Rating must be an integer.")
+        return value
 
-        # Validate rating
-        if not isinstance(rating, int):
-            raise ValueError("Rating must be an integer")
-        if rating < 1 or rating > 5:
-            raise ValueError("Rating must be between 1 and 5")
-
-        # Validate place
-        if not isinstance(place, Place):
-            raise ValueError("Place must be a Place instance")
-
-        # Validate user
-        if not isinstance(user, User):
-            raise ValueError("User must be a User instance")
-
-        self.text = text
-        self.rating = rating
-        self.place = place
-        self.user = user
-
-        # Add this review to the place's reviews
-        place.add_review(self)
-        # Add this review to the user's reviews
-        user.add_review(self)
-
-    def update_rating(self, new_rating):
-        """
-        Update the review rating.
-
-        Args:
-            new_rating (int): New rating value (1-5)
-
-        Raises:
-            ValueError: If rating is invalid
-        """
-        if not isinstance(new_rating, int):
-            raise ValueError("Rating must be an integer")
-        if new_rating < 1 or new_rating > 5:
-            raise ValueError("Rating must be between 1 and 5")
-
-        self.rating = new_rating
-        self.save()  # Update the updated_at timestamp
+    def to_dict(self):
+        '''Convert the Review object to a dictionary'''
+        return {
+            'id': self.id,
+            'text': self._text,
+            'user_id': self._user_id,
+            'place_id': self._place_id,
+            'rating': self._rating
+        }

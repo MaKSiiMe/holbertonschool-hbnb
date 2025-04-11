@@ -3,64 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Place Details</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>List of Places</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+    <link rel="icon" href="assets/images/logos-icons/icon.png">
 </head>
 <body>
+    <header>
+        <div class="logo-login">
+
+            <a href="index.html"><img src="assets/images/logos-icons/logo.png" alt="index"></a>
+
+            <a href="login.html" id="login-link">
+                <button class="login-button">
+                  <span class="login-text">Login</span>
+                  <img src="assets/images/logos-icons/login.png" alt="login-logo" class="icon-login">
+                </button>
+              </a>
+            <a href="login.html" id="logout-link">
+                <button class="login-button">
+                  <span class="login-text">Logout</span>
+                  <img src="assets/images/logos-icons/logout.svg" alt="login-logo" class="icon-logout">
+                </button>
+            </a>
+        </div>
+    </header>
     <main>
-        <!-- Section for place details -->
-        <section id="place-details" class="place-details">
-            <h1 class="place-name">Cozy Apartment</h1>
-            <p class="place-price">$120 per night</p>
-            <p class="place-host">Hosted by: John Doe</p>
-            <p class="place-description">A cozy apartment located in the heart of the city. Perfect for a weekend getaway.</p>
-            <ul class="place-amenities">
-                <li>Free Wi-Fi</li>
-                <li>Air Conditioning</li>
-                <li>Kitchen</li>
-                <li>Parking</li>
-            </ul>
-        </section>
+        <div class="separator-header">
+            <span></span>
+        </div>
 
-        <!-- Section for reviews -->
+        <section id="place-details">
+            <!-- Place details will be populated dynamically -->
+        </section>
+        <div class="separator-header">
+            <span></span>
+        </div>
+
         <section id="reviews">
-            <h2>Reviews</h2>
-            <div class="review-card">
-                <p class="review-comment">Amazing place! Highly recommend.</p>
-                <p class="review-user">- Jane Smith</p>
-                <p class="review-rating">Rating: 5/5</p>
-            </div>
-            <div class="review-card">
-                <p class="review-comment">Very clean and well-located.</p>
-                <p class="review-user">- Mark Johnson</p>
-                <p class="review-rating">Rating: 4/5</p>
-            </div>
+            <!-- Reviews will be populated dynamically -->
         </section>
 
-        <!-- Section for adding a review -->
         <section id="add-review">
-            <h2>Add a Review</h2>
-            <!-- If the user is logged in, show the form -->
-            <form id="review-form" class="add-review">
-                <label for="review-text">Review:</label>
-                <textarea id="review-text" name="review-text" required></textarea>
-                
-                <label for="review-rating">Rating:</label>
-                <select id="review-rating" name="review-rating" required>
-                    <option value="5">5 - Excellent</option>
-                    <option value="4">4 - Good</option>
-                    <option value="3">3 - Average</option>
-                    <option value="2">2 - Poor</option>
-                    <option value="1">1 - Terrible</option>
-                </select>
-                
-                <button type="submit">Submit</button>
-            </form>
-
-            <!-- If the user is not logged in, show a button to navigate to the login page -->
-            <button id="login-button" class="login-button" style="display: none;">Log in to add a review</button>
         </section>
     </main>
-    <script src="scripts.js"></script>
+    <script src="assets/js/scripts.js"></script>
+    <footer>
+        <p>&copy; HBNB Vieilledent Adrien - Holberton School - C#25 - All rights reserved</p>
+    </footer>
 </body>
 </html>

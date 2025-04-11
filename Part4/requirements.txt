@@ -1,9 +1,8 @@
-#Part3 /requirements.txt
 flask
 flask-restx
 flask-bcrypt
 flask-jwt-extended
 sqlalchemy
 flask-sqlalchemy
-flask_migrate
-flask-cors
+PyJWT==2.8.0
+flask_cors
