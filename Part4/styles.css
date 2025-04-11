@@ -1,0 +1,159 @@
+/* 
+  This is a SAMPLE File to get you started. Follow the instructions on the project to complete the tasks. 
+  You'll probably need to override some of theese styles.
+*/
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+header .logo {
+    height: 50px;
+}
+
+header .nav-link,
+header .login-button {
+    text-decoration: none;
+    color: #007BFF;
+    margin-left: 15px;
+    font-size: 1rem;
+}
+
+header .login-button {
+    font-weight: bold;
+}
+
+header .nav-link:hover,
+header .login-button:hover {
+    text-decoration: underline;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 1rem;
+}
+
+main {
+    padding: 2rem;
+}
+
+.place-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 20px;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.place-card h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.place-card p {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.details-button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.details-button:hover {
+    background-color: #0056b3;
+}
+
+.place-details {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.place-info {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.review-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.review-card p {
+    margin-bottom: 5px;
+}
+
+.add-review {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.add-review label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.add-review textarea,
+.add-review select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.add-review button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-review button:hover {
+    background-color: #218838;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

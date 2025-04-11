@@ -9,7 +9,9 @@
 <body>
     <header>
         <nav>
-            <a href="login.html" id="login-link">Login</a>
+            <img src="images/logo.png" alt="Application Logo" class="logo">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="login.html" id="login-link" class="login-button">Login</a>
         </nav>
     </header>
     <main>
@@ -20,9 +22,22 @@
             </select>
         </section>
         <section id="places-list">
+            <div class="place-card">
+                <h3>Place Name</h3>
+                <p>Price per night: $100</p>
+                <button class="details-button">View Details</button>
+            </div>
+            <div class="place-card">
+                <h3>Another Place</h3>
+                <p>Price per night: $150</p>
+                <button class="details-button">View Details</button>
+            </div>
             <!-- List of places will be populated dynamically -->
         </section>
     </main>
     <script src="scripts.js"></script>
+    <footer>
+        <p>&copy; 2025 All rights reserved.</p>
+    </footer>
 </body>
 </html>
